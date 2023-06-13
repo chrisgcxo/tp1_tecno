@@ -60,7 +60,7 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
 
   let variacionSerpenteo =1;
   // variables de movimiento
-  this.posY = this.posY + this.dy;//+random(-variacionSerpenteo,+variacionSerpenteo);
+  this.posY = this.posY + this.dy+random(-variacionSerpenteo,+variacionSerpenteo);
   this.posX = this.posX + this.dx+random(-variacionSerpenteo,+variacionSerpenteo);
 
   // cuando la posicion en y pasa los -80, resetea la posicion

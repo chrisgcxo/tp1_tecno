@@ -102,10 +102,10 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
     //direccion en y
     this.dy_fig = this.vel_fig * sin(radians(this.angulo_fig));
     
-    
+    let variacionSerpenteo=1;
     //variables de movimiento//
-    this.posY_fig = this.posY_fig + this.dy_fig;
-    this.posX_fig = this.posX_fig + this.dx_fig;   
+    this.posY_fig = this.posY_fig + this.dy_fig+random(-variacionSerpenteo,+variacionSerpenteo);;
+    this.posX_fig = this.posX_fig + this.dx_fig+random(-variacionSerpenteo,+variacionSerpenteo);;   
   }
 
 
