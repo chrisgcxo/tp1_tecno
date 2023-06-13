@@ -14,8 +14,15 @@ let mascarafigura;
 let imgs_trazos = [];
 //pgraphics
 let pgf;
+//objeto paleta
+let paletas_color;
+//imagen paleta
+let imagen_paleta_fondo;
 // Carga de recursos antes de iniciar el sketch
 function preload() {
+  //imagen paleta
+  imagen_paleta_fondo=loadImage('paleta/paleta_fondo.jpg');
+  imagen_paleta_figura=loadImage('paleta/paleta_figura2.png')
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
   // Mascara fondo
@@ -47,8 +54,9 @@ function preload() {
 }
 
 function setup() {
-  //noCursor();
   colorMode(HSB);
+  //objeto paleta
+  paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);
   createCanvas(windowWidth, windowHeight);
   pgf = createGraphics(windowWidth, windowHeight);
   // Fondo
@@ -57,30 +65,29 @@ function setup() {
 
   // Objetos Trazo_f
   for (let i = 0; i < 10; i++) {
-    let trazo_f = new Trazo_f(trazofondo);
+    let trazo_f = new Trazo_f(trazofondo,paletas_color);
     tfon.push(trazo_f);
   }
   // Objetos trazo_fig
   for (let j = 0; j < 10; j++) {
     // Generar un índice aleatorio dentro del rango de índices de imgs_trazos
-    let trazo_fi = new trazo_fig(mascarafigura,imgs_trazos);
+    let trazo_fi = new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
     tfig.push(trazo_fi);
   }
 
 }
 
 function draw() {
-
+ //trazos fondo 
 for (let i = 0; i < tfon.length; i++) {
     push();
     tfon[i].dibujar_regulares();
     tfon[i].movertrazo_f();
-    tfon[i].darcolor();
     pop();
   }
 
 
-
+//trazos figura
   for (let j = 0; j < tfig.length; j++) {
     push();
     tfig[j].dibujar();

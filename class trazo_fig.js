@@ -2,9 +2,7 @@
 //solucionar rotación de las imagenes//
 //la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
 class trazo_fig {
-  constructor(imagen,trazo) {
-    //tamaño para los circulos
-    this.tam_fig = 10;
+  constructor(imagen,trazo,paleta) {
     //margenes
     this.margen_tfig=10;
     //movimiento
@@ -15,11 +13,14 @@ class trazo_fig {
     this.vel_fig = random(2, 7);
     this.angulo_fig;
     //color
+    this.paleta=paleta;
+    this.colorandom=this.paleta.darUnColor_figura();
     //HSBA
     this.hue_fig=random(360);
     this.brillo_fig=random(360);
     this.saturacion_fig=random(360);
     this.alfa_fig=1;
+     //variable para levantar la clase paleta
 
     this.color_fig = color(this.hue_fig,this.brillo_fig,this.saturacion_fig,this.alfa_fig);
     //this.color_fig2=color(0,0,0);
@@ -31,6 +32,8 @@ class trazo_fig {
     this.x_mascara;
     this.y_mascara;
     // trazo
+     // Cambiar tamaño del trazo
+     this.tamaño = random(15, 35);
     //largo inicial trazo
      this.largo_trazo = 0.05;
       
@@ -81,8 +84,6 @@ class trazo_fig {
     this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
     //se verifica si pasó el intervalo mínimo desde el último salto al principio antes de llamar a la función
     if (millis() > this.saltar_principio_timer + this.saltar_principio_intervalo) {
-      // Si se supera el máximo del trazo o se sale del límite de la forma
-      //---------------quitar el or----------//
       if (this.largo_trazo >= max_largo_trazo || !this.pertenece_a_la_forma()) {
         this.saltaralprincipio();
         this.saltar_principio_timer = millis();
@@ -100,7 +101,8 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
     this.dx_fig = this.vel_fig * cos(radians(this.angulo_fig));
     //direccion en y
     this.dy_fig = this.vel_fig * sin(radians(this.angulo_fig));
-
+    
+    
     //variables de movimiento//
     this.posY_fig = this.posY_fig + this.dy_fig;
     this.posX_fig = this.posX_fig + this.dx_fig;   
@@ -126,11 +128,12 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
       this.posX_fig = random(width/3*2-100, width/3+100);
     }
 //cambiar color 
-this.hue_fig=random(360);
+this.colorandom=this.paleta.darUnColor_figura();
     //dar posicion al azar en y
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
+        this.tamaño = random(15, 35);
   }
    
 
@@ -140,10 +143,10 @@ this.hue_fig=random(360);
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
-  pgf.tint(this.color_fig);
+  pgf.tint(this.colorandom);
   //rotacion de la imagen con un map
   pgf.rotate(radians(this.anguloimg2));
-  pgf.image(this.trazo,this.posX_fig,this.posY_fig);
+  pgf.image(this.trazo,this.posX_fig,this.posY_fig,this.tamaño,this.tamaño);
   pop();
 }
 /*esto es para generar trazos negros

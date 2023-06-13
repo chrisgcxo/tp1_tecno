@@ -5,9 +5,15 @@ o limitar la cantidad de vueltas que dan los caminantes*/
 //hacer otro grupo de trazos mas irregulares//
 //hacer la paleta de colores//
 class Trazo_f {
-  constructor(quetrazo) {
+  constructor(quetrazo,paleta) {
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
+    //tamaño trazos
+       // Tamaño aleatorio del trazo
+    this.tamaño = random(15, 35);
+    //this.quetrazo.resize(25,25);
+    //variable para levantar la clase paleta
+    this.paleta=paleta;
     //vars movimiento//
     this.posX=random(width);
     this.posY=height;
@@ -24,28 +30,17 @@ class Trazo_f {
     this.difX;
     this.difY;
     //HSBA
-    this.randomcol = random(200, 360);
-    this.brillo=200;
-    this.saturacion=200;
+    this.colorandom=this.paleta.darUnColor_fondo();
   } 
 //funcion para gestionar brillo y saturacion y opacidad con velocidad del mouse//
-darcolor() {
-  // Brillo y opacidad
-  this.brillo =50;
-  this.saturacion=40;
+velocidad_mouse() {
   let velocidadX = abs(mouseX - pmouseX);
   let velocidadY = abs(mouseY - pmouseY);
-  
   // Modificar la variable "valor" en función de la velocidad del mouse
   if (velocidadX > 200 || velocidadY > 200) {
     //capaz acá se pueden tirar otros trazos mas cortos//
-    this.saturacion += 50; // Aumentar el valor si la velocidad es alta
-    this.dibujar_irregulares();
   } else {
-   this.saturacion-= 1; // Disminuir el valor si la velocidad es baja
   }
-// Restringir el valor dentro de un rango específico (opcional)
-  this.brillo=constrain(this.brillo, 0, 255);
 }
 
   
@@ -56,15 +51,17 @@ darcolor() {
   //map para el angulo de los caminantes
   this.angulo = map(this.posX, 0, width, anguloInicial_fig - 90, anguloInicial_fig + 90);
 // map para el rotate de las imgs
-this.anguloimg= map(this.posX, 0, width,-90, 90);
+this.anguloimg= map(this.posX, 0, width,-90, +90);
+
   // dirección en x
   this.dx = this.vel * cos(radians(this.angulo));
   // dirección en y
   this.dy = this.vel * sin(radians(this.angulo));
 
+  let variacionSerpenteo =1;
   // variables de movimiento
-  this.posY = this.posY + this.dy;
-  this.posX = this.posX + this.dx;
+  this.posY = this.posY + this.dy;//+random(-variacionSerpenteo,+variacionSerpenteo);
+  this.posX = this.posX + this.dx+random(-variacionSerpenteo,+variacionSerpenteo);
 
   // cuando la posicion en y pasa los -80, resetea la posicion
   if (this.posY > height || this.posY>width) {
@@ -84,30 +81,21 @@ this.anguloimg= map(this.posX, 0, width,-90, 90);
               this.randomcol = random(200, 360);
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
               this.posX= random(width);
+              this.colorandom=this.paleta.darUnColor_fondo();
+              // Cambiar tamaño del trazo
+               this.tamaño = random(15, 35);
                             }
 
     dibujar_regulares(){
       push();
-      tint(this.randomcol,this.saturacion, this.brillo,0.20); 
+      tint(this.colorandom); 
       imageMode(CENTER);
       translate(this.posX,this.posY);
       //esto es el map para girar la imagen del trazo;
       rotate(radians(this.anguloimg));
-      image(this.quetrazo,0,0); 
+      image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
     }
 
-dibujar_irregulares(){
-push();
-//tint(this.randomcol,this.saturacion, this.brillo,0.5); 
-//imageMode(CENTER);
-//translate(this.posX,this.posY);
-//rotate(radians(this.anguloimg));
-//las otras imagenes//
-noStroke();
-fill(0);
-ellipse(this.posX+random(50),this.posY+random(10),20,20);
-pop();
-  }
     
   }
