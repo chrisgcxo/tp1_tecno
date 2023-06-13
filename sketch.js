@@ -89,5 +89,6 @@ for (let i = 0; i < tfon.length; i++) {
   }
      // Mostrar el pgraphic//
      image(pgf, 0, 0, width, height);
+     rect(0,0,20,20);
 }
 
