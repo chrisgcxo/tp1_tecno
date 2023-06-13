@@ -22,7 +22,7 @@ let imagen_paleta_fondo;
 function preload() {
   //imagen paleta
   imagen_paleta_fondo=loadImage('paleta/paleta_fondo.jpg');
-  imagen_paleta_figura=loadImage('paleta/paleta_figura2.png')
+  imagen_paleta_figura=loadImage('paleta/paleta_figura2.png');
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
   // Mascara fondo
