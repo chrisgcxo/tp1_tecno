@@ -7,11 +7,14 @@ class trazo_fig {
     this.margen_tfig=10;
     //movimiento
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
+    this.posX2_fig;
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     this.dx_fig;
     this.dy_fig;
     this.vel_fig = random(2, 7);
     this.angulo_fig;
+    //sectores para generar posiciones random
+    this.sector;
     //color
     this.paleta=paleta;
     //paleta figura
@@ -76,6 +79,14 @@ class trazo_fig {
 
     //funciones 
 
+    
+//actualizar con la amplitud del sonido
+actualizar(amplitud){
+  //map:amplitud,min,max, min y max de la variable a mapear
+  this.sector=map(amplitud,AMP_MIN,AMP_MAX,0,2);
+}
+  
+
 //funcion mover trazo//
   mover() { 
      //variable para el maximo del largo de un trazo//
@@ -107,8 +118,8 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
     
     let variacionSerpenteo=1;
     //variables de movimiento//
-    this.posY_fig = this.posY_fig + this.dy_fig+random(-variacionSerpenteo,+variacionSerpenteo);;
-    this.posX_fig = this.posX_fig + this.dx_fig+random(-variacionSerpenteo,+variacionSerpenteo);;   
+    this.posY_fig = this.posY_fig + this.dy_fig+random(-variacionSerpenteo,+variacionSerpenteo);
+    this.posX_fig = this.posX_fig + this.dx_fig+random(-variacionSerpenteo,+variacionSerpenteo);   
   }
 
 
@@ -142,8 +153,8 @@ this.colorandom=this.paleta.darUnColor_figura();
 
 
   dibujar() {
-// Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes//
-if (this.esta_en_margenes() && this.pertenece_a_la_forma()&&haysonido) {
+// Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes y si hay sonido(ESTADO)//
+if (this.esta_en_margenes() && this.pertenece_a_la_forma() && haysonido) {
   push();
   //trazos con imgs//
   pgf.tint(this.colorandom);

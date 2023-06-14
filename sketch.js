@@ -3,17 +3,22 @@
 //transformar las interacciones a sonido
 //gestor de estados
 
-//configuracion
-//umbral minimo de sonido que supera al ruido ambiente
-let AMP_MIN=0.02;
-let haysonido=false;
-
-
+//configuracion sonido
 //microfono
 let mic;
 let imprimir=true;
 //amplitud
 let amp;
+//umbral minimo de sonido que supera al ruido ambiente
+let AMP_MIN=0.01;
+//umbral maximo de ruido
+let AMP_MAX=0.2;
+//var para saber sin hay o no sonido
+let haysonido=false;
+let anteshabiasonido=false;
+
+
+
 // Array de objetos Trazo_f
 let tfon = [];
 // Array de objetos trazo_fig
@@ -96,14 +101,20 @@ function setup() {
 }
 
 function draw() {
+  //sonido
    //si el sonido es mayor que el umbral devuelve true
  haysonido=amp>AMP_MIN;
- 
- // background(255);
+ //variable para corroborar si empezo el sonido
+ let empezoelsonido= haysonido && !anteshabiasonido;//EVENTO
   //amplitud
   amp=mic.getLevel();
- //trazos fondo 
 
+  //si empezo el sonido solo sucede una vez en un fotograma porque es un evento; 
+  if(empezoelsonido){
+    tfig[0].saltaralprincipio();
+  }
+
+ //trazos fondo 
   for (let i = 0; i < tfon.length; i++) {
     push();
     tfon[i].dibujar_regulares();
@@ -115,6 +126,7 @@ function draw() {
 //trazos figura
   for (let j = 0; j < tfig.length; j++) {
     push();
+    tfig[j].actualizar(amp);
     tfig[j].dibujar();
     tfig[j].mover();
     pop();
@@ -124,6 +136,8 @@ function draw() {
      if(imprimir){
       //printdata();
      }
+     //variable para saber si en el fotograma anterior habia sonido
+     anteshabiasonido=haysonido;
 }
  
 

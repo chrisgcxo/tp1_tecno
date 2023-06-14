@@ -16,6 +16,7 @@ class Trazo_f {
     this.paleta=paleta;
     //vars movimiento//
     this.posX=random(width);
+    this.posX2;
     this.posY=height;
     this.dx;
     this.dy;
@@ -31,10 +32,8 @@ class Trazo_f {
     this.difY;
     //HSBA
     this.colorandom=this.paleta.darUnColor_fondo();
-    //sonido
-    this.AMP_MIN=0.02;
-     this.haysonido=false;
-  } 
+  }  
+
 //funcion para gestionar brillo y saturacion y opacidad con velocidad del mouse//
 velocidad_mouse() {
   let velocidadX = abs(mouseX - pmouseX);
@@ -46,10 +45,8 @@ velocidad_mouse() {
   }
 }
 
-  
     movertrazo_f() {
       //variable para saber si hay sonido
-      this.haysonido=amp>AMP_MIN;
        // Mapear el ángulo en función de la posición de la posicion x del trazo en el mouse
   let anguloInicial_fig = 270;
 
@@ -92,6 +89,7 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
                             }
 
     dibujar_regulares(){
+      if(haysonido){
       push();
       tint(this.colorandom); 
       imageMode(CENTER);
@@ -100,6 +98,7 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
       rotate(radians(this.anguloimg));
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
+      }
     }
 
     
