@@ -3,7 +3,17 @@
 //transformar las interacciones a sonido
 //gestor de estados
 
+//configuracion
+//umbral minimo de sonido que supera al ruido ambiente
+let AMP_MIN=0.02;
+let haysonido=false;
 
+
+//microfono
+let mic;
+let imprimir=true;
+//amplitud
+let amp;
 // Array de objetos Trazo_f
 let tfon = [];
 // Array de objetos trazo_fig
@@ -54,6 +64,14 @@ function preload() {
 }
 
 function setup() {
+  //mic
+  //objeto microfono
+ mic = new p5.AudioIn();
+ //inicializar mic
+ mic.start();
+ //motor de audio//
+ userStartAudio();
+
   colorMode(HSB);
   //objeto paleta
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);
@@ -78,8 +96,15 @@ function setup() {
 }
 
 function draw() {
+   //si el sonido es mayor que el umbral devuelve true
+ haysonido=amp>AMP_MIN;
+ 
+ // background(255);
+  //amplitud
+  amp=mic.getLevel();
  //trazos fondo 
-for (let i = 0; i < tfon.length; i++) {
+
+  for (let i = 0; i < tfon.length; i++) {
     push();
     tfon[i].dibujar_regulares();
     tfon[i].movertrazo_f();
@@ -96,5 +121,19 @@ for (let i = 0; i < tfon.length; i++) {
   }
      // Mostrar el pgraphic//
      image(pgf, 0, 0, width, height);
+     if(imprimir){
+      //printdata();
+     }
 }
+ 
+
+/*function printdata(){
+  push();
+  textSize(20);
+  stroke(0);
+  let texto= 'amp '+amp;
+  text(texto,20,20);
+  ellipse(width/2,height/2-amp*100,50,50);
+  pop();
+}*/
 

@@ -14,7 +14,10 @@ class trazo_fig {
     this.angulo_fig;
     //color
     this.paleta=paleta;
+    //paleta figura
     this.colorandom=this.paleta.darUnColor_figura();
+    //paleta fondo
+    this.colorandom2=this.paleta.darUnColor_fondo();
     //HSBA
     this.hue_fig=random(360);
     this.brillo_fig=random(360);
@@ -140,18 +143,18 @@ this.colorandom=this.paleta.darUnColor_figura();
 
   dibujar() {
 // Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes//
-if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
+if (this.esta_en_margenes() && this.pertenece_a_la_forma()&&haysonido) {
   push();
   //trazos con imgs//
   pgf.tint(this.colorandom);
-  //rotacion de la imagen con un map
   pgf.rotate(radians(this.anguloimg2));
   pgf.image(this.trazo,this.posX_fig,this.posY_fig,this.tamaño,this.tamaño);
   pop();
 }
-/*esto es para generar trazos negros
-else if(!this.pertenece_a_la_forma()){
+//esto es para generar trazos negros
+/*else if(!this.pertenece_a_la_forma()){
   push();
+  pgf.tint(this.colorandom2);
   pop();
 }*/
   }

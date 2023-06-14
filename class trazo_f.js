@@ -31,6 +31,9 @@ class Trazo_f {
     this.difY;
     //HSBA
     this.colorandom=this.paleta.darUnColor_fondo();
+    //sonido
+    this.AMP_MIN=0.02;
+     this.haysonido=false;
   } 
 //funcion para gestionar brillo y saturacion y opacidad con velocidad del mouse//
 velocidad_mouse() {
@@ -45,6 +48,8 @@ velocidad_mouse() {
 
   
     movertrazo_f() {
+      //variable para saber si hay sonido
+      this.haysonido=amp>AMP_MIN;
        // Mapear el ángulo en función de la posición de la posicion x del trazo en el mouse
   let anguloInicial_fig = 270;
 
