@@ -79,13 +79,16 @@ class trazo_fig {
 
     //funciones 
 
-    
-//actualizar con la amplitud del sonido
-actualizar(amplitud){
-  //map:amplitud,min,max, min y max de la variable a mapear
-  this.sector=map(amplitud,AMP_MIN,AMP_MAX,0,2);
-}
+    //actualizar amplitud con sonido
+    /*actualizar(amplitud){
+      this.diam = map(amplitud, AMP_MIN, AMP_MAX, 15, 50 ); // mapeamos el valor de amp de entrada al diámetro del caminante
+      this.vel = map(amplitud, AMP_MIN, AMP_MAX, 1, 25 ); // lo mismo hacemos con la velocidad
+  }*/
   
+  cambiarTamanio(tam){
+    this.diam = tam;
+}
+
 
 //funcion mover trazo//
   mover() { 
@@ -154,7 +157,7 @@ this.colorandom=this.paleta.darUnColor_figura();
 
   dibujar() {
 // Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes y si hay sonido(ESTADO)//
-if (this.esta_en_margenes() && this.pertenece_a_la_forma() && haysonido) {
+if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
   pgf.tint(this.colorandom);

@@ -89,7 +89,6 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
                             }
 
     dibujar_regulares(){
-      if(haysonido){
       push();
       tint(this.colorandom); 
       imageMode(CENTER);
@@ -98,7 +97,6 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
       rotate(radians(this.anguloimg));
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
-      }
     }
 
     

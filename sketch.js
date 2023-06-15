@@ -1,28 +1,56 @@
 //to do list
-//implementar sonido
-//transformar las interacciones a sonido
 //gestor de estados
 
-//configuracion sonido
-//microfono
+//----CONFIGURACION-----
+//amplitud minima y maxima
+let AMP_MIN = 0.01; // umbral mínimo de sonido qiu supera al ruido de fondo
+let AMP_MAX = 0.2 // amplitud máxima del sonido
+//pitch minimo y maximo
+let FREC_MIN = 100;
+let FREC_MAX = 400;
+//amortiguacion de ruido
+let AMORTIGUACION = 0.9; // factor de amortiguación de la señal
+//mostrar grafico para debug
+let IMPRIMIR = true;
+
+//variables estados
+let marca;
+let tiempoLimiteAgregar = 3000;
+let tiempoLimiteGrosor = 3000;
+let tiempoLimiteColor = 3000;
+let tiempoLimiteFin = 3000;
+
+//----MICROFONO----
 let mic;
-let imprimir=true;
-//amplitud
-let amp;
-//umbral minimo de sonido que supera al ruido ambiente
-let AMP_MIN=0.01;
-//umbral maximo de ruido
-let AMP_MAX=0.2;
-//var para saber sin hay o no sonido
-let haysonido=false;
-let anteshabiasonido=false;
+let audioContext;
+
+//-----AMPLITUD-----
+let amp; // variable para cargar la amplitud (volumen) ee la señal de entrada del mic
 
 
+//----GESTOR AMPITUD----
+let gestorAmp;
 
+//pitch del sonido (tono)
+let pitch;
+const model_url = 'https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/';
+//----GESTOR PITCH----
+let gestorPitch;
+
+
+//-----ESTADOS-------
+let haySonido = false;
+let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma atrás
+
+//estado inicial de los objetos//
+let estado="agregar";
 // Array de objetos Trazo_f
 let tfon = [];
 // Array de objetos trazo_fig
 let tfig = [];
+//variable para indicar cantidad de objetos
+let cantidad=0;
+
 // Mascara figura
 let mascarafigura;
 // Array de imágenes de trazos figura
@@ -33,6 +61,7 @@ let pgf;
 let paletas_color;
 //imagen paleta
 let imagen_paleta_fondo;
+
 // Carga de recursos antes de iniciar el sketch
 function preload() {
   //imagen paleta
@@ -68,19 +97,22 @@ function preload() {
   }
 }
 
-function setup() {
-  //mic
-  //objeto microfono
- mic = new p5.AudioIn();
- //inicializar mic
- mic.start();
- //motor de audio//
- userStartAudio();
 
-  colorMode(HSB);
+function setup() {
+ //----MICROFONO-----
+ createCanvas(windowWidth, windowHeight);
+ audioContext = getAudioContext();
+ mic = new p5.AudioIn(); // objeto que se comunica con la enrada de micrófono
+ mic.start(startPitch); // se inicia el flujo de audio hay que pasarle el pitch para que funcione
+ //----GESTOR----
+ gestorAmp = new GestorSenial(AMP_MIN, AMP_MAX); // inicilizo en goestor con los umbrales mínimo y máximo de la señal
+ gestorPitch= new GestorSenial(FREC_MIN,FREC_MAX);
+ gestorAmp.f = AMORTIGUACION;
+ //------MOTOR DE AUDIO-----
+ userStartAudio(); // esto lo utilizo porque en algunos navigadores se cuelga el audio. Esto hace un reset del motor de audio (audio context)
+
   //objeto paleta
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);
-  createCanvas(windowWidth, windowHeight);
   pgf = createGraphics(windowWidth, windowHeight);
   // Fondo
   //trazofondo.mask(mascaratfondo);
@@ -97,57 +129,181 @@ function setup() {
     let trazo_fi = new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
     tfig.push(trazo_fi);
   }
-
+  background(255);
+  //colorMode(HSB);
 }
 
 function draw() {
-  //sonido
-   //si el sonido es mayor que el umbral devuelve true
- haysonido=amp>AMP_MIN;
- //variable para corroborar si empezo el sonido
- let empezoelsonido= haysonido && !anteshabiasonido;//EVENTO
-  //amplitud
-  amp=mic.getLevel();
+  gestorAmp.actualizar(mic.getLevel());  
+  amp = gestorAmp.filtrada;
+  //cargo en vol la amplitud de la señal del mic cruda
+  let vol= mic.getLevel();
+  gestorAmp.actualizar(vol);//volumen filtrado
+
+  haySonido = amp > AMP_MIN; //var para saber si hay sonido
+
+  let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
+  let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
 
   //si empezo el sonido solo sucede una vez en un fotograma porque es un evento; 
-  if(empezoelsonido){
-    tfig[0].saltaralprincipio();
+  if(inicioElSonido){
+   tfig[0].saltaralprincipio();
   }
-
+  
+  if(haySonido){  // mientras hay sonido constante sucede constantemente porque es un   ESTADO
  //trazos fondo 
-  for (let i = 0; i < tfon.length; i++) {
-    push();
-    tfon[i].dibujar_regulares();
-    tfon[i].movertrazo_f();
-    pop();
-  }
+ for (let i = 0; i < tfon.length; i++) {
+  tfon[i].dibujar_regulares();
+  tfon[i].movertrazo_f();
+}
 
 
 //trazos figura
-  for (let j = 0; j < tfig.length; j++) {
-    push();
-    tfig[j].actualizar(amp);
-    tfig[j].dibujar();
-    tfig[j].mover();
-    pop();
+for (let j = 0; j < tfig.length; j++) {
+ tfig[j].dibujar();
+ tfig[j].mover();
+}
   }
-     // Mostrar el pgraphic//
+ 
+     //Mostrar el pgraphic//
      image(pgf, 0, 0, width, height);
-     if(imprimir){
-      //printdata();
-     }
+
+     if(!IMPRIMIR){
+      printData();
+    }
+    diagrama_de_estados(cantidad,estado,inicioElSonido,finDelSonido);
+    console.log(estado);
      //variable para saber si en el fotograma anterior habia sonido
-     anteshabiasonido=haysonido;
+     antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
  
+function diagrama_de_estados(cantidad,estado,inicioElSonido,finDelSonido){
+  if(estado == "agregar"){
+    if(inicioElSonido){ //Evento
+      cantidad++;
+      //console.log("nuevo rectangulo");
+    }
 
-/*function printdata(){
-  push();
-  textSize(20);
-  stroke(0);
-  let texto= 'amp '+amp;
-  text(texto,20,20);
-  ellipse(width/2,height/2-amp*100,50,50);
-  pop();
-}*/
+    if(cantidad > 10){
+      estado = "grosor";
+    }
+    
+    if(haySonido){ //Estado
+    }
 
+    if(finDelSonido){//Evento
+      marca = millis();
+    }
+    if(!haySonido){ //Estado SILENCIO
+      let ahora = millis();
+      if(ahora > marca + tiempoLimiteAgregar){
+        estado = "grosor";
+        marca = millis();
+      }
+    }
+  
+
+  }else if (estado == "grosor"){
+
+    if(inicioElSonido){ //Evento
+    }
+  
+    if(haySonido){ //Estado
+
+    }
+
+    if(finDelSonido){//Evento
+      marca = millis();
+    }
+
+    if(!haySonido){ //Estado SILENCIO
+      let ahora = millis();
+      if(ahora > marca + tiempoLimiteGrosor){
+
+        estado = "color";
+        marca = millis();
+      }
+    }
+
+  }else if (estado == "color"){
+
+    if(inicioElSonido){ //Evento
+     
+    }
+  
+    if(haySonido){ //Estado
+   
+    }
+
+    if(finDelSonido){//Evento
+      marca = millis();
+    }
+    
+    if(!haySonido){ //Estado SILENCIO
+      let ahora = millis();
+      if(ahora > marca + tiempoLimiteColor){
+
+        estado = "fin";
+        marca = millis();
+      }
+    }
+    
+  }else if (estado == "fin"){
+
+    if(inicioElSonido){ //Evento
+      marca = millis();
+    }
+  
+    if(haySonido){ //Estado
+
+      let ahora = millis();
+      if(ahora > marca + tiempoLimiteFin){
+        estado = "reinicio";
+        marca = millis();
+      }
+    }
+
+    if(finDelSonido){//Evento
+    }
+    
+    if(!haySonido){ //Estado SILENCIO
+    }
+    
+  }else if (estado == "reinicio"){
+
+    cantidad = 0;
+    estado = "agregar";
+    marca = millis();
+  }
+
+}
+
+
+
+//cuando dibujo no se muestra la variable filtrada no se pq pero creo que si está siendo filtrada
+function printData(){
+background(255);
+ellipse(width/2, height-amp * 300, 30, 30);
+gestorAmp.dibujar(100, 500);
+gestorPitch.dibujar(100, 250);
+}
+
+// ---- Pitch detection ---
+function startPitch() {
+  pitch = ml5.pitchDetection(model_url, audioContext , mic.stream, modelLoaded);
+}
+
+function modelLoaded() {
+  getPitch();
+}
+
+function getPitch() {
+  pitch.getPitch(function(err, frequency) {
+    if (frequency) {
+
+      gestorPitch.actualizar(frequency);    
+      //console.log(frequency);
+    } 
+    getPitch();
+  })
+}
