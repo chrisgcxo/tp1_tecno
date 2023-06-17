@@ -1,5 +1,7 @@
 //to do list
-//gestor de estados
+//ver como recibir el color separado para poder cambiar la opacidad y saturacion
+//ver como actualizar la posicion en funcion a la amplitud
+//ver como arreglar la cuestion de los colores
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -14,11 +16,17 @@ let AMORTIGUACION = 0.9; // factor de amortiguación de la señal
 let IMPRIMIR = true;
 
 //variables estados
+//tiempo
 let marca;
 let tiempoLimiteAgregar = 3000;
 let tiempoLimiteGrosor = 3000;
 let tiempoLimiteColor = 3000;
 let tiempoLimiteFin = 3000;
+
+//variable para indicar cantidad de objetos
+let cantidad=0;
+let cantidad_max=20;
+
 
 //----MICROFONO----
 let mic;
@@ -46,17 +54,16 @@ let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma 
 let estado="agregar";
 // Array de objetos Trazo_f
 let tfon = [];
+let tfon2=[];
 // Array de objetos trazo_fig
 let tfig = [];
-//variable para indicar cantidad de objetos
-let cantidad=0;
+let tfig2=[];
 
 // Mascara figura
 let mascarafigura;
 // Array de imágenes de trazos figura
 let imgs_trazos = [];
 //pgraphics
-let pgf;
 //objeto paleta
 let paletas_color;
 //imagen paleta
@@ -113,13 +120,12 @@ function setup() {
 
   //objeto paleta
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);
-  pgf = createGraphics(windowWidth, windowHeight);
   // Fondo
   //trazofondo.mask(mascaratfondo);
  
 
   // Objetos Trazo_f
-  for (let i = 0; i < 10; i++) {
+  /*for (let i = 0; i < 10; i++) {
     let trazo_f = new Trazo_f(trazofondo,paletas_color);
     tfon.push(trazo_f);
   }
@@ -128,7 +134,7 @@ function setup() {
     // Generar un índice aleatorio dentro del rango de índices de imgs_trazos
     let trazo_fi = new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
     tfig.push(trazo_fi);
-  }
+  }*/
   background(255);
   //colorMode(HSB);
 }
@@ -142,139 +148,137 @@ function draw() {
 
   haySonido = amp > AMP_MIN; //var para saber si hay sonido
 
-  let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
-  let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
-
-  //si empezo el sonido solo sucede una vez en un fotograma porque es un evento; 
-  if(inicioElSonido){
-   tfig[0].saltaralprincipio();
-  }
-  
-  if(haySonido){  // mientras hay sonido constante sucede constantemente porque es un   ESTADO
- //trazos fondo 
- for (let i = 0; i < tfon.length; i++) {
-  tfon[i].dibujar_regulares();
-  tfon[i].movertrazo_f();
-}
-
-
-//trazos figura
-for (let j = 0; j < tfig.length; j++) {
- tfig[j].dibujar();
- tfig[j].mover();
-}
-  }
  
-     //Mostrar el pgraphic//
-     image(pgf, 0, 0, width, height);
+  diagrama_de_estados();
+  console.log(estado);
 
      if(!IMPRIMIR){
       printData();
     }
-    diagrama_de_estados(cantidad,estado,inicioElSonido,finDelSonido);
-    console.log(estado);
+
+
      //variable para saber si en el fotograma anterior habia sonido
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
  
-function diagrama_de_estados(cantidad,estado,inicioElSonido,finDelSonido){
-  if(estado == "agregar"){
-    if(inicioElSonido){ //Evento
-      cantidad++;
-      //console.log("nuevo rectangulo");
-    }
+function diagrama_de_estados(){
+  let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
+  let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
+ //crear trazos cuando se inicio el sonido//
+for(let k = 0; k<cantidad;k++){
+  tfon2[k].dibujar_regulares();
+  tfon2[k].movertrazo_f();
+}
+//crear trazos figura cuando se inicio el sonido//
+for(let l=0; l<cantidad;l++){
+  tfig2[l].dibujar();
+  tfig2[l].mover();
+}
 
-    if(cantidad > 10){
-      estado = "grosor";
-    }
-    
-    if(haySonido){ //Estado
-    }
+if(estado == "agregar"){
+  //cuando inicia el sonido
+  if(inicioElSonido){ //Evento
+     tfon2[cantidad] = new Trazo_f(trazofondo,paletas_color);
+    tfig2[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
+    cantidad++;
+  }
 
-    if(finDelSonido){//Evento
-      marca = millis();
-    }
-    if(!haySonido){ //Estado SILENCIO
-      let ahora = millis();
-      if(ahora > marca + tiempoLimiteAgregar){
-        estado = "grosor";
-        marca = millis();
-      }
-    }
+ //si la cantidad supera el maximo de trazos pasa al siguiente estado
+  if(cantidad >cantidad_max){
+    //estado = "grosor";
+  }
   
+  if(haySonido){ //Estado
+  // aca se podria cambiar la posicion en funcion al pitch
+  }
 
-  }else if (estado == "grosor"){
-
-    if(inicioElSonido){ //Evento
-    }
-  
-    if(haySonido){ //Estado
-
-    }
-
-    if(finDelSonido){//Evento
-      marca = millis();
-    }
-
-    if(!haySonido){ //Estado SILENCIO
-      let ahora = millis();
-      if(ahora > marca + tiempoLimiteGrosor){
-
-        estado = "color";
-        marca = millis();
-      }
-    }
-
-  }else if (estado == "color"){
-
-    if(inicioElSonido){ //Evento
-     
-    }
-  
-    if(haySonido){ //Estado
-   
-    }
-
-    if(finDelSonido){//Evento
-      marca = millis();
-    }
-    
-    if(!haySonido){ //Estado SILENCIO
-      let ahora = millis();
-      if(ahora > marca + tiempoLimiteColor){
-
-        estado = "fin";
-        marca = millis();
-      }
-    }
-    
-  }else if (estado == "fin"){
-
-    if(inicioElSonido){ //Evento
-      marca = millis();
-    }
-  
-    if(haySonido){ //Estado
-
-      let ahora = millis();
-      if(ahora > marca + tiempoLimiteFin){
-        estado = "reinicio";
-        marca = millis();
-      }
-    }
-
-    if(finDelSonido){//Evento
-    }
-    
-    if(!haySonido){ //Estado SILENCIO
-    }
-    
-  }else if (estado == "reinicio"){
-
-    cantidad = 0;
-    estado = "agregar";
+  if(finDelSonido){//Evento
+    //empieza el contador de tiempo
     marca = millis();
   }
+  //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
+  if(!haySonido){ //Estado SILENCIO
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteAgregar){
+      estado = "grosor";
+      marca = millis();
+    }
+  }
+
+
+}else if (estado == "grosor"){
+
+  if(inicioElSonido){ //Evento
+  }
+
+  if(haySonido){ //Estado
+   //aca deberian ir las funciones que son para actualizar la saturacion y la opacidad del fondo
+    //el largo del trazo ancho etc
+  }
+
+  if(finDelSonido){//Evento
+    marca = millis();
+  }
+
+  if(!haySonido){ //Estado SILENCIO
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteGrosor){
+
+      estado = "color";
+      marca = millis();
+    }
+  }
+
+}else if (estado == "color"){
+
+  if(inicioElSonido){ //Evento
+   //aca se podria actualizar el color
+  }
+
+  if(haySonido){ //Estado
+ 
+  }
+
+  if(finDelSonido){//Evento
+    marca = millis();
+  }
+  
+  if(!haySonido){ //Estado SILENCIO
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteColor){
+
+      estado = "fin";
+      marca = millis();
+    }
+  }
+  //si hago un sonido de 3 seg se reinicia 
+}else if (estado == "fin"){
+
+  if(inicioElSonido){ //Evento
+    marca = millis();
+  }
+
+  if(haySonido){ //Estado
+
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteFin){
+      estado = "reinicio";
+      marca = millis();
+    }
+  }
+
+  if(finDelSonido){//Evento
+  }
+  
+  if(!haySonido){ //Estado SILENCIO
+  }
+  
+}else if (estado == "reinicio"){
+
+  cantidad = 0;
+  estado = "agregar";
+  marca = millis();
+}
 
 }
 

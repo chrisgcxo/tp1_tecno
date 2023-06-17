@@ -1,5 +1,5 @@
 //to do list//
-//solucionar rotación de las imagenes//
+//solucionar rotación de las imagenes?//
 //la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
 class trazo_fig {
   constructor(imagen,trazo,paleta) {
@@ -160,9 +160,9 @@ this.colorandom=this.paleta.darUnColor_figura();
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
-  pgf.tint(this.colorandom);
-  pgf.rotate(radians(this.anguloimg2));
-  pgf.image(this.trazo,this.posX_fig,this.posY_fig,this.tamaño,this.tamaño);
+  tint(this.colorandom);
+  rotate(radians(this.anguloimg2));
+  image(this.trazo,this.posX_fig,this.posY_fig,this.tamaño,this.tamaño);
   pop();
 }
 //esto es para generar trazos negros
