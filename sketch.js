@@ -1,8 +1,8 @@
 //to do list
 //ver como recibir el color separado para poder cambiar la opacidad y saturacion
 //ver como actualizar la posicion en funcion a la amplitud
-//ver como arreglar la cuestion de los colores
-
+//ver como arreglar de la figura  los colores creo que es mejor usar un map para determinar segun el eje y que levantar una paleta
+//tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.01; // umbral mínimo de sonido qiu supera al ruido de fondo
@@ -25,7 +25,7 @@ let tiempoLimiteFin = 3000;
 
 //variable para indicar cantidad de objetos
 let cantidad=0;
-let cantidad_max=20;
+let cantidad_max=5;
 
 
 //----MICROFONO----
@@ -39,8 +39,10 @@ let amp; // variable para cargar la amplitud (volumen) ee la señal de entrada d
 //----GESTOR AMPITUD----
 let gestorAmp;
 
+
 //pitch del sonido (tono)
 let pitch;
+let tono;
 const model_url = 'https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/';
 //----GESTOR PITCH----
 let gestorPitch;
@@ -54,10 +56,8 @@ let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma 
 let estado="agregar";
 // Array de objetos Trazo_f
 let tfon = [];
-let tfon2=[];
 // Array de objetos trazo_fig
 let tfig = [];
-let tfig2=[];
 
 // Mascara figura
 let mascarafigura;
@@ -123,34 +123,20 @@ function setup() {
   // Fondo
   //trazofondo.mask(mascaratfondo);
  
-
-  // Objetos Trazo_f
-  /*for (let i = 0; i < 10; i++) {
-    let trazo_f = new Trazo_f(trazofondo,paletas_color);
-    tfon.push(trazo_f);
-  }
-  // Objetos trazo_fig
-  for (let j = 0; j < 10; j++) {
-    // Generar un índice aleatorio dentro del rango de índices de imgs_trazos
-    let trazo_fi = new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
-    tfig.push(trazo_fi);
-  }*/
-  background(255);
+  //background(255);
   //colorMode(HSB);
 }
 
 function draw() {
-  gestorAmp.actualizar(mic.getLevel());  
   amp = gestorAmp.filtrada;
+  tono = gestorPitch.filtrada;
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
-
   haySonido = amp > AMP_MIN; //var para saber si hay sonido
 
- 
   diagrama_de_estados();
-  console.log(estado);
+  //console.log(estado);
 
      if(!IMPRIMIR){
       printData();
@@ -161,35 +147,53 @@ function draw() {
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
  
+
+
 function diagrama_de_estados(){
   let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
   let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
- //crear trazos cuando se inicio el sonido//
-for(let k = 0; k<cantidad;k++){
-  tfon2[k].dibujar_regulares();
-  tfon2[k].movertrazo_f();
-}
-//crear trazos figura cuando se inicio el sonido//
-for(let l=0; l<cantidad;l++){
-  tfig2[l].dibujar();
-  tfig2[l].mover();
-}
+
 
 if(estado == "agregar"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
-     tfon2[cantidad] = new Trazo_f(trazofondo,paletas_color);
-    tfig2[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
+     // if para limitar la cantidad de veces que se crean los trazos del fondo
+    if(cantidad <cantidad_max){
+      /*el 3er parametro son para contar la cantidad de veces que saltar al principio se activa 
+      y el 4to es para limitar la cantidad de vueltas por trazo para que no entren en loop*/
+    tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,5);
+  }
+    tfig[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color,amp);
+    //cada vez que se corta e inicia el sonido de nuevo se genera una posicion nueva
+    tfig[cantidad].saltaralprincipio();
     cantidad++;
   }
+  
+
+  
 
  //si la cantidad supera el maximo de trazos pasa al siguiente estado
+
   if(cantidad >cantidad_max){
     //estado = "grosor";
   }
   
   if(haySonido){ //Estado
   // aca se podria cambiar la posicion en funcion al pitch
+  //crear trazos figura cuando se inicio el sonido//
+  if(cantidad <cantidad_max){
+    for(let k = 0; k<cantidad;k++){
+      tfon[k].dibujar_regulares();
+      tfon[k].movertrazo_f();
+    }
+     }
+
+     for(let l=0; l<cantidad;l++){
+      //esto cambia el tamaño de los trazos
+      tfig[l].actualizar_conamp(amp);
+      tfig[l].dibujar();
+      tfig[l].mover();
+    }
   }
 
   if(finDelSonido){//Evento
@@ -279,7 +283,8 @@ if(estado == "agregar"){
   estado = "agregar";
   marca = millis();
 }
-
+console.log(estado);
+console.log(cantidad);
 }
 
 

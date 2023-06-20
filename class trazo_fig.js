@@ -1,35 +1,30 @@
 //to do list//
 //solucionar rotación de las imagenes?//
 //la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
+//hacer algo para determinar la posicion en funcion al pitch
+//levantar de varias mascaras al azar para cambiar la mascara en cada ejecucion
 class trazo_fig {
   constructor(imagen,trazo,paleta) {
     //margenes
     this.margen_tfig=10;
     //movimiento
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
-    this.posX2_fig;
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     this.dx_fig;
     this.dy_fig;
     this.vel_fig = random(2, 7);
     this.angulo_fig;
-    //sectores para generar posiciones random
-    this.sector;
     //color
     this.paleta=paleta;
-    //paleta figura
-    this.colorandom=this.paleta.darUnColor_figura();
     //paleta fondo
     this.colorandom2=this.paleta.darUnColor_fondo();
     //HSBA
     this.hue_fig=random(360);
     this.brillo_fig=random(360);
     this.saturacion_fig=random(360);
-    this.alfa_fig=1;
-     //variable para levantar la clase paleta
-
+    this.opacidad = 1;
+    //color figura
     this.color_fig = color(this.hue_fig,this.brillo_fig,this.saturacion_fig,this.alfa_fig);
-    //this.color_fig2=color(0,0,0);
     this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
     this.saltar_principio_intervalo = 500; 
@@ -39,7 +34,7 @@ class trazo_fig {
     this.y_mascara;
     // trazo
      // Cambiar tamaño del trazo
-     this.tamaño = random(15, 35);
+     this.tam= random(15, 35);
     //largo inicial trazo
      this.largo_trazo = 0.05;
       
@@ -79,17 +74,6 @@ class trazo_fig {
 
     //funciones 
 
-    //actualizar amplitud con sonido
-    /*actualizar(amplitud){
-      this.diam = map(amplitud, AMP_MIN, AMP_MAX, 15, 50 ); // mapeamos el valor de amp de entrada al diámetro del caminante
-      this.vel = map(amplitud, AMP_MIN, AMP_MAX, 1, 25 ); // lo mismo hacemos con la velocidad
-  }*/
-  
-  cambiarTamanio(tam){
-    this.diam = tam;
-}
-
-
 //funcion mover trazo//
   mover() { 
      //variable para el maximo del largo de un trazo//
@@ -97,7 +81,7 @@ class trazo_fig {
     // Restringir largo_trazo dentro del rango permitido//
     this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
     // Incrementar o decrementar largo_trazo en función de mouseX//
-    this.largo_trazo+= map(mouseX, 0, width, -1, 1);
+    this.largo_trazo+= map(mouseX, 0, width, -1, 1);// no si sirve tanto este map cuando aplicamos el sonido
     this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
     //se verifica si pasó el intervalo mínimo desde el último salto al principio antes de llamar a la función
     if (millis() > this.saltar_principio_timer + this.saltar_principio_intervalo) {
@@ -112,7 +96,7 @@ class trazo_fig {
     //map para la distribucion de trazo
     this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90,anguloInicial + 90);
     //map para el rotate de las imgs
-this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
+this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
 
     //direccion en x
     this.dx_fig = this.vel_fig * cos(radians(this.angulo_fig));
@@ -128,7 +112,7 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
 
   //funcion volver al estado inicial del trazo(espacio toroidal)//
   saltaralprincipio() {
- 
+ //------------------ACA DEBERIA LLAMAR A LA FUNCION PARA SETEAR LA POSX 
     //sector arriba eje y
     if (mouseY >= height/2+50) {
       // Generar trazos al azar desde el punto cero de la pantalla a la mitad (izquierda)
@@ -139,13 +123,12 @@ this.anguloimg2= map(this.posX, this.anguloInicial, width, -90, +90);
       // Generar trazos al azar desde la mitad hasta el ancho de la pantalla (derecha)
       this.posX_fig = random(width/3*2-100, width);
     }
-    //sector medio eje y
+    //sector medio eje ydiam
      else{
       //generar trazos al azar en el sector del medio de la pantalla
       this.posX_fig = random(width/3*2-100, width/3+100);
     }
-//cambiar color 
-this.colorandom=this.paleta.darUnColor_figura();
+
     //dar posicion al azar en y
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
@@ -153,6 +136,17 @@ this.colorandom=this.paleta.darUnColor_figura();
         this.tamaño = random(15, 35);
   }
    
+//esto es para cambiar el tamaño en funcion al sonido
+actualizar_conamp (amplitud){
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,25);
+}
+
+
+
+//esto no se para que sirve creo que no hace nada
+/*cambiartam(tam){
+  this.tamaño=tam;
+}*/
 
 
   dibujar() {
@@ -160,9 +154,9 @@ this.colorandom=this.paleta.darUnColor_figura();
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
-  tint(this.colorandom);
+  tint(this.hue_fig,this.brillo_fig,this.saturacion_fig,this.opacidad);
   rotate(radians(this.anguloimg2));
-  image(this.trazo,this.posX_fig,this.posY_fig,this.tamaño,this.tamaño);
+  image(this.trazo,this.posX_fig,this.posY_fig,this.tam,this.tam);
   pop();
 }
 //esto es para generar trazos negros

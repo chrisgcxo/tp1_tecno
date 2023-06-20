@@ -3,9 +3,9 @@
 /*hacer algo con el fondo para que no se acumulen tantos trazos(bajar la opacidad prograsivamente
 o limitar la cantidad de vueltas que dan los caminantes*/
 //hacer otro grupo de trazos mas irregulares//
-//hacer la paleta de colores//
+//hacer una funcion para actualizar saturacion y
 class Trazo_f {
-  constructor(quetrazo,paleta) {
+  constructor(quetrazo,paleta,vueltas,max_vueltas) {
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
     //tamaño trazos
@@ -27,23 +27,14 @@ class Trazo_f {
     //angulos rotacion imgs
     this.anguloimg;
     //vars cambiar color//
-    //velocidad mouse//
-    this.difX;
-    this.difY;
+
     //HSBA
     this.colorandom=this.paleta.darUnColor_fondo();
+    //cantidad de vueltas que dan los caminantes
+    this.vueltas=vueltas;
+    this.max_vueltas=max_vueltas;
   }  
 
-//funcion para gestionar brillo y saturacion y opacidad con velocidad del mouse//
-velocidad_mouse() {
-  let velocidadX = abs(mouseX - pmouseX);
-  let velocidadY = abs(mouseY - pmouseY);
-  // Modificar la variable "valor" en función de la velocidad del mouse
-  if (velocidadX > 200 || velocidadY > 200) {
-    //capaz acá se pueden tirar otros trazos mas cortos//
-  } else {
-  }
-}
 
     movertrazo_f() {
       //variable para saber si hay sonido
@@ -60,7 +51,7 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
   // dirección en y
   this.dy = this.vel * sin(radians(this.angulo));
 
-  let variacionSerpenteo =1;
+  let variacionSerpenteo =random(2);
   // variables de movimiento
   this.posY = this.posY + this.dy+random(-variacionSerpenteo,+variacionSerpenteo);
   this.posX = this.posX + this.dx+random(-variacionSerpenteo,+variacionSerpenteo);
@@ -69,14 +60,12 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
   if (this.posY > height || this.posY>width) {
     this.saltaralprincipio_f();
   }
-  //si el angulo es menor a tanto los angulos de la imagen son tantos
-  if(this.posX>width/3){
-  }
-   
+
     }
 
              // espacio toroidal//
              saltaralprincipio_f() {
+              if (this.vueltas<this.max_vueltas){
               // resetea el trazo a afuera de la pantalla abajo//
               this.posY=height;
               // le asigna un color random al siguiente trazo que sale desde abajo//
@@ -86,6 +75,8 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
               this.colorandom=this.paleta.darUnColor_fondo();
               // Cambiar tamaño del trazo
                this.tamaño = random(15, 35);
+               this.vueltas++;
+              }
                             }
 
     dibujar_regulares(){

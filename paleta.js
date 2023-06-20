@@ -1,3 +1,5 @@
+//borrar la paleta del trazo fig?
+//implementar un random que levante una imagen al azar la primera vez que se crea la paleta
 class paleta {
     constructor(imagenPaleta_fondo,imagenPaleta_figura) {
       this.imagenPaleta_fondo = imagenPaleta_fondo;
@@ -14,17 +16,7 @@ class paleta {
   
       return hsbColor;
     }
-    //paleta figura
-    darUnColor_figura() {
-        let x = int(random(this.imagenPaleta_figura.width));
-        let y = int(random(this.imagenPaleta_figura.height));
-    
-        let pixelColor2 =this.imagenPaleta_figura.get(x, y);
-    
-        let hsbColor2 = rgbToHsb(pixelColor2);
-    
-        return hsbColor2;
-      }
+ 
   }
   //transformar rgb a hsb
   function rgbToHsb(rgbColor) {
@@ -34,6 +26,7 @@ class paleta {
     let h = hue(c);
     let s = saturation(c);
     let b = brightness(c);
+    //how can i transform this return " return color(h, s, b);" a color in hsb but hue, bright and saturation on diferent vars?
     return color(h, s, b);
   }
 
