@@ -30,11 +30,15 @@ class Trazo_f {
 
     //HSBA
     this.colorandom=this.paleta.darUnColor_fondo();
+    this.hue_f=this.colorandom.hue;
+    this.saturation_f=this.colorandom.saturation;
+    this.brightness_f=this.colorandom.brightness;
+    this.alpha_f =this.colorandom.alpha;
     //cantidad de vueltas que dan los caminantes
     this.vueltas=vueltas;
     this.max_vueltas=max_vueltas;
   }  
-
+ 
 
     movertrazo_f() {
       //variable para saber si hay sonido
@@ -51,9 +55,9 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
   // dirección en y
   this.dy = this.vel * sin(radians(this.angulo));
 
-  let variacionSerpenteo =random(2);
+  let variacionSerpenteo =2;
   // variables de movimiento
-  this.posY = this.posY + this.dy+random(-variacionSerpenteo,+variacionSerpenteo);
+  this.posY = this.posY + this.dy;
   this.posX = this.posX + this.dx+random(-variacionSerpenteo,+variacionSerpenteo);
 
   // cuando la posicion en y pasa los -80, resetea la posicion
@@ -73,22 +77,37 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
               this.posX= random(width);
               this.colorandom=this.paleta.darUnColor_fondo();
-              // Cambiar tamaño del trazo
-               this.tamaño = random(15, 35);
+              // Cambiar tamaño del trazo con pitch o amp
+               this.setTam(gestorAmp.filtrada);
+               //cambiar opacidad con pitch
+               this.setOpacidad (gestorPitch.filtrada);
                this.vueltas++;
               }
-                            }
+                }
+     //con esto se puede actualizar en tiempo real pero no queda muy bien quizas regulando el 3er y cuarto parametro si    
+    //aca mismo se puede actualizar la saturacion y el brillo de cualquiera de las dos maneras
+     actualizar_conpitch (pitch){
+      this.alpha_f=map(pitch,0,1,0,255);
+      }
+
+    setTam(tam){
+      this.tamaño=map(tam,0,1,15,35);
+    }
+    //cambiar opacidad con pitch
+    setOpacidad (valor){
+      this.alpha_f = map(valor, 0, 1, 10, 255);
+  }
 
     dibujar_regulares(){
       push();
-      tint(this.colorandom); 
+      tint(this.hue_f, this.saturation_f, this.brightness_f, this.alpha_f);
       imageMode(CENTER);
       translate(this.posX,this.posY);
       //esto es el map para girar la imagen del trazo;
       rotate(radians(this.anguloimg));
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
+      console.log(this.alpha_f);
     }
 
-    
   }

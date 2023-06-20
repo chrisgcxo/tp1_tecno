@@ -1,15 +1,16 @@
 //to do list
-//ver como recibir el color separado para poder cambiar la opacidad y saturacion
 //ver como actualizar la posicion en funcion a la amplitud
 //ver como arreglar de la figura  los colores creo que es mejor usar un map para determinar segun el eje y que levantar una paleta
 //tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
+//revisar en class trazo_f cual es la mejor manera de manipular la opacidad etc
+
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.01; // umbral mínimo de sonido qiu supera al ruido de fondo
 let AMP_MAX = 0.2 // amplitud máxima del sonido
 //pitch minimo y maximo
-let FREC_MIN = 100;
-let FREC_MAX = 400;
+let FREC_MIN = 90;
+let FREC_MAX = 350;
 //amortiguacion de ruido
 let AMORTIGUACION = 0.9; // factor de amortiguación de la señal
 //mostrar grafico para debug
@@ -123,8 +124,8 @@ function setup() {
   // Fondo
   //trazofondo.mask(mascaratfondo);
  
-  //background(255);
-  //colorMode(HSB);
+  background(255);
+  colorMode(HSB);
 }
 
 function draw() {
@@ -135,7 +136,6 @@ function draw() {
 
   diagrama_de_estados();
   //console.log(estado);
-
      if(!IMPRIMIR){
       printData();
     }
@@ -183,6 +183,10 @@ if(estado == "agregar"){
     for(let k = 0; k<cantidad;k++){
       tfon[k].dibujar_regulares();
       tfon[k].movertrazo_f();
+      //cambiar tamaño con tono
+      //tfon[k].setOpacidad(gestorPitch.filtrada);
+      //cambiar tamaño con volumen
+      //tfon[k].setTam(gestorAmp.filtrada);
     }
      }
 
@@ -281,13 +285,13 @@ if(estado == "agregar"){
   estado = "agregar";
   marca = millis();
 }
-console.log(estado);
-console.log(cantidad);
+//console.log(estado);
+//console.log(cantidad);
 }
 
 
 
-//cuando dibujo no se muestra la variable filtrada no se pq pero creo que si está siendo filtrada
+
 function printData(){
 background(255);
 ellipse(width/2, height-amp * 300, 30, 30);
