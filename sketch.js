@@ -128,12 +128,10 @@ function setup() {
 }
 
 function draw() {
-  amp = gestorAmp.filtrada;
-  tono = gestorPitch.filtrada;
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
-  haySonido = amp > AMP_MIN; //var para saber si hay sonido
+  haySonido = gestorAmp.filtrada > AMP_MIN; //var para saber si hay sonido
 
   diagrama_de_estados();
   //console.log(estado);
@@ -190,7 +188,7 @@ if(estado == "agregar"){
 
      for(let l=0; l<cantidad;l++){
       //esto cambia el tamaño de los trazos
-      tfig[l].actualizar_conamp(amp);
+      tfig[l].actualizar_conamp(gestorAmp.filtrada);
       tfig[l].dibujar();
       tfig[l].mover();
     }
