@@ -1,5 +1,7 @@
 //to do list
 //tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
+//RECALIBAR AMPLITUD y PITCH
+
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -11,7 +13,7 @@ let FREC_MAX = 350;
 //amortiguacion de ruido
 let AMORTIGUACION = 0.9; // factor de amortiguación de la señal
 //mostrar grafico para debug
-let IMPRIMIR = true;
+let IMPRIMIR = false;
 
 //variables estados
 //tiempo
@@ -52,26 +54,30 @@ let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma 
 
 //estado inicial de los objetos//
 let estado="agregar";
+
+//obtejos 
 // Array de objetos Trazo_f
 let tfon = [];
 // Array de objetos trazo_fig
 let tfig = [];
 
+//imagenes y mascaras
 // Mascara figura
 let mascarafigura;
 // Array de imágenes de trazos figura
 let imgs_trazos = [];
-//pgraphics
 //objeto paleta
 let paletas_color;
-//imagen paleta
-let imagen_paleta_fondo;
+
+//array de imagenes para las paletas del fondo
+let imagen_paleta_fondo=[];
+//array de imagenes para las paletas de la figura
+let imagen_paleta_figura=[];
 
 // Carga de recursos antes de iniciar el sketch
 function preload() {
-  //imagen paleta
-  imagen_paleta_fondo=loadImage('paleta/paleta_fondo_2.jpg');
-  imagen_paleta_figura=loadImage('paleta/paleta_figura2.png');
+
+
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
   // Mascara fondo
@@ -90,9 +96,6 @@ function preload() {
     "trazos/trazofigura_07.png"
   ];
 
-  // Carga de la máscara figura
-  mascarafigura = loadImage('trazos/mascara_figura4.png');
-
   // Carga de las imágenes de trazos figura en el array imgs_trazos
   for (let i = 0; i < urls.length; i++) {
     loadImage(urls[i], (img) => {
@@ -100,6 +103,41 @@ function preload() {
       imgs_trazos.push(img); // Agregar la imagen cargada al array
     });
   }
+//imaganes paleta de colores 
+
+//figura
+  // URLs de las imágenes de la paleta de colores de los trazos figura
+  let urls_pfig = [
+    "paleta/paleta_figura2.png",
+    "paleta/paleta_figura3.jpg",
+    "paleta/paleta_figura4.jpg",
+  ];
+
+  // Carga de las imágenes de trazos figura en el array imagen_paleta_figura
+  for (let j = 0; j < urls_pfig.length; j++) {
+    loadImage(urls_pfig[j], (img) => {
+   
+      imagen_paleta_figura.push(img); // Agregar la imagen cargada al array
+    });
+  }
+
+//fondo
+  // URLs de las imágenes de la paleta de colores de los trazos fondo
+  let urls_pfon = [
+    "paleta/paleta_fondo.jpg",
+    "paleta/paleta_fondo_2.jpg"
+  ];
+
+  // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
+  for (let k = 0; k < urls_pfon.length; k++) {
+    loadImage(urls_pfon[k], (img) => {
+   
+      imagen_paleta_fondo.push(img); // Agregar la imagen cargada al array
+    });
+  }
+
+    // Carga de la máscara figura
+    mascarafigura = loadImage('trazos/mascara_figura4.png');
 }
 
 
@@ -117,9 +155,9 @@ function setup() {
  userStartAudio(); // esto lo utilizo porque en algunos navigadores se cuelga el audio. Esto hace un reset del motor de audio (audio context)
 
   //objeto paleta
-  paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);
-  // Fondo
-  //trazofondo.mask(mascaratfondo);
+  //paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
+  //prueba con varias imgs
+  paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
   background(255);
   colorMode(HSB);
@@ -133,12 +171,12 @@ function draw() {
 
   diagrama_de_estados();
   //console.log(estado);
-     if(!IMPRIMIR){
+     if(IMPRIMIR){
       printData();
     }
-
-
-     //variable para saber si en el fotograma anterior habia sonido
+     //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
+    //paletas_color.debug(2);
+     //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
  
@@ -158,7 +196,7 @@ if(estado == "agregar"){
       y el 4to es para limitar la cantidad de vueltas por trazo para que no entren en loop*/
     tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,5);
   }
-    tfig[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color,amp);
+    tfig[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
     //cada vez que se corta e inicia el sonido de nuevo se genera una posicion nueva
     tfig[cantidad].saltaralprincipio();
     cantidad++;

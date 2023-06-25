@@ -44,12 +44,14 @@ class trazo_fig {
   //metodos 
   // metodo  para verificar si los trazos están en los píxeles oscuros de la imagen de mascara
     pertenece_a_la_forma() {
+      //aca tendría que hacer algunas modificaciones para que en lugar de levantar una imagen como parametro de entrada levante un array de imagenes
       let x_en_img = floor(map(this.posX_fig, 0, width, 0, this.imagen.width));
       let y_en_img = floor(map(this.posY_fig, 0, height, 0, this.imagen.height));
       let estepixel = this.imagen.get(x_en_img, y_en_img);
 
       //manda true cada vez que el brillo de un pixel de la img de mascara es menor a 50//
       return brightness(estepixel) <50; 
+      //aca podría hacer algo para modificar la opacidad en funcion a acercarse a los bordes
     }
 
     //metodo para verificar si se sale de los margenes  de la pantalla
@@ -83,7 +85,6 @@ class trazo_fig {
       if (this.largo_trazo >= max_largo_trazo || !this.pertenece_a_la_forma()) {
         this.saltaralprincipio();
         this.saltar_principio_timer = millis();
-        this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
       }
     } 
 
@@ -107,8 +108,8 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
 
 
 
-
   saltaralprincipio() {
+
  //quizas en lugar de hacer la comprobacion con el mouseX podria hacerlo con gestorAmp.filtrada o el pitch
     //sector arriba eje y
     if (mouseY >= height/2+50) {
@@ -125,14 +126,15 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
       //generar trazos al azar en el sector del medio de la pantalla
       this.posX_fig = random(width/3*2-100, width/3+100);
     }
-
+    //cambiar color segun pos en Y
+    this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
     //dar posicion al azar en y
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
   }
    
-//esto es para cambiar el tamaño en funcion al sonido
+//esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
 actualizar_conamp (amplitud){
 this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,20);
 }
@@ -148,12 +150,6 @@ if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   image(this.trazo,this.posX_fig,this.posY_fig,this.tam,this.tam);
   pop();
 }
-//esto es para generar trazos negros
-/*else if(!this.pertenece_a_la_forma()){
-  push();
-  pgf.tint(this.colorandom2);
-  pop();
-}*/
   }
 
 

@@ -1,8 +1,9 @@
-//fijarse como levantar entre varias imagenes random para generar la paleta una vez
+
+//unificar esteticasmente  imagenes de las que se extrae el color para las paletas
 class paleta {
   constructor(imagenPaleta_fondo, imagenPaleta_figura) {
-    this.imagenPaleta_fondo = imagenPaleta_fondo;
-    this.imagenPaleta_figura = imagenPaleta_figura;
+    this.imagenPaleta_fondo = this.elegirImagenAleatoria(imagenPaleta_fondo);
+    this.imagenPaleta_figura = this.elegirImagenAleatoria(imagenPaleta_figura);
   }
   
   // Paleta fondo
@@ -16,6 +17,23 @@ class paleta {
   
     return { hue, saturation, brightness, alpha };
   }
+
+  // Elegir una imagen aleatoria de un array
+  elegirImagenAleatoria(imagenes) {
+    let index = int(random(imagenes.length));
+    return imagenes[index];
+  }
+
+  //testeo
+  debug(opcion){
+    if(opcion==1){
+      image(this.imagenPaleta_figura,0,0);
+    }
+    else if(opcion==2){
+      image(this.imagenPaleta_fondo,0,0);
+    }
+  }
+
   //ver si no me conviene retornar todos los parametros del color por separado
   //paleta figura
   darUnColor_figura(posY) {
@@ -29,6 +47,7 @@ class paleta {
     return color(hue, saturation, brightness, alpha);
 
   }
+
 }
 
 // Transformar RGB a HSB

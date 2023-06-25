@@ -1,9 +1,9 @@
 //to do list//
 //probar con diferentes mascaras y tipos de trazos//
 /*hacer algo con el fondo para que no se acumulen tantos trazos(bajar la opacidad prograsivamente
-o limitar la cantidad de vueltas que dan los caminantes*/
-//hacer otro grupo de trazos mas irregulares//
-//hacer una funcion para actualizar saturacion y
+o limitar la cantidad de vueltas que dan los caminantes,hecho pero revisar ajustar la cantidad de vueltas*/
+//pensar si combiene esto :hacer otro grupo de trazos mas irregulares//
+//hay que revisar los parametros de la funcion para manejar el tamaño,saturacion etc
 class Trazo_f {
   constructor(quetrazo,paleta,vueltas,max_vueltas) {
     //variable para elegir el trazo//
@@ -77,10 +77,6 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
               this.posX= random(width);
               this.colorandom=this.paleta.darUnColor_fondo();
-              // Cambiar tamaño del trazo con pitch o amp
-               //this.setTam(gestorAmp.filtrada);
-               //cambiar opacidad con pitch
-               //this.setOpacidad (gestorPitch.filtrada);
                this.vueltas++;
               }
                 }
