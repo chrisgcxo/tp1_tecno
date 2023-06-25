@@ -16,6 +16,19 @@ class paleta {
   
     return { hue, saturation, brightness, alpha };
   }
+  //ver si no me conviene retornar todos los parametros del color por separado
+  //paleta figura
+  darUnColor_figura(posY) {
+    let x = int(random(this.imagenPaleta_figura.width));
+    let y = int(posY);
+    
+    let pixelColor = this.imagenPaleta_figura.get(x, y);
+    
+    let { hue, saturation, brightness, alpha } = rgbToHsb(pixelColor);
+    
+    return color(hue, saturation, brightness, alpha);
+
+  }
 }
 
 // Transformar RGB a HSB

@@ -1,5 +1,4 @@
 //to do list//
-//solucionar rotación de las imagenes?//
 //la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
 //hacer algo para determinar la posicion en funcion al pitch
 //levantar de varias mascaras al azar para cambiar la mascara en cada ejecucion
@@ -16,15 +15,11 @@ class trazo_fig {
     this.angulo_fig;
     //color
     this.paleta=paleta;
-    //paleta fondo
-    this.colorandom2=this.paleta.darUnColor_fondo();
-    //HSBA
-    this.hue_fig=random(360);
-    this.brillo_fig=random(360);
-    this.saturacion_fig=random(360);
-    this.opacidad = 1;
-    //color figura
-    this.color_fig = color(this.hue_fig,this.brillo_fig,this.saturacion_fig,this.alfa_fig);
+    /*paleta figura que selecciona un pixel al azar utilizando como argumento la posY del trazo
+    de esta forma se respeta la gama de colores porque establece un paralelismo entre la posy del trazo
+    y la forma en la que se agrupan los colores en la imagen original*/
+    this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
+ 
     this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
     this.saltar_principio_intervalo = 500; 
@@ -88,6 +83,7 @@ class trazo_fig {
       if (this.largo_trazo >= max_largo_trazo || !this.pertenece_a_la_forma()) {
         this.saltaralprincipio();
         this.saltar_principio_timer = millis();
+        this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
       }
     } 
 
@@ -110,9 +106,10 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
   }
 
 
-  //funcion volver al estado inicial del trazo(espacio toroidal)//
+
+
   saltaralprincipio() {
- //------------------ACA DEBERIA LLAMAR A LA FUNCION PARA SETEAR LA POSX 
+ //quizas en lugar de hacer la comprobacion con el mouseX podria hacerlo con gestorAmp.filtrada o el pitch
     //sector arriba eje y
     if (mouseY >= height/2+50) {
       // Generar trazos al azar desde el punto cero de la pantalla a la mitad (izquierda)
@@ -133,20 +130,12 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
-        this.tamaño = random(15, 35);
   }
    
 //esto es para cambiar el tamaño en funcion al sonido
 actualizar_conamp (amplitud){
-this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,25);
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,20);
 }
-
-
-
-//esto no se para que sirve creo que no hace nada
-/*cambiartam(tam){
-  this.tamaño=tam;
-}*/
 
 
   dibujar() {
@@ -154,7 +143,7 @@ this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,25);
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
-  tint(this.hue_fig,this.brillo_fig,this.saturacion_fig,this.opacidad);
+  tint(this.colorsegun_y);
   rotate(radians(this.anguloimg2));
   image(this.trazo,this.posX_fig,this.posY_fig,this.tam,this.tam);
   pop();

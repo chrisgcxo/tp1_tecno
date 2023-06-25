@@ -1,8 +1,5 @@
 //to do list
-//ver como actualizar la posicion en funcion a la amplitud
-//ver como arreglar de la figura  los colores creo que es mejor usar un map para determinar segun el eje y que levantar una paleta
 //tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
-//revisar en class trazo_f cual es la mejor manera de manipular la opacidad etc
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -73,7 +70,7 @@ let imagen_paleta_fondo;
 // Carga de recursos antes de iniciar el sketch
 function preload() {
   //imagen paleta
-  imagen_paleta_fondo=loadImage('paleta/paleta_fondo.jpg');
+  imagen_paleta_fondo=loadImage('paleta/paleta_fondo_2.jpg');
   imagen_paleta_figura=loadImage('paleta/paleta_figura2.png');
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
@@ -183,10 +180,10 @@ if(estado == "agregar"){
     for(let k = 0; k<cantidad;k++){
       tfon[k].dibujar_regulares();
       tfon[k].movertrazo_f();
-      //cambiar tamaño con tono
-      //tfon[k].setOpacidad(gestorPitch.filtrada);
       //cambiar tamaño con volumen
-      //tfon[k].setTam(gestorAmp.filtrada);
+      tfon[k].setTam(gestorAmp.filtrada);
+      //cambiar la saturacion con el amp;
+      tfon[k].setBrillo(gestorAmp.filtrada);
     }
      }
 
@@ -218,8 +215,7 @@ if(estado == "agregar"){
   }
 
   if(haySonido){ //Estado
-   //aca deberian ir las funciones que son para actualizar la saturacion y la opacidad del fondo
-    //el largo del trazo ancho etc
+
   }
 
   if(finDelSonido){//Evento

@@ -78,24 +78,27 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
               this.posX= random(width);
               this.colorandom=this.paleta.darUnColor_fondo();
               // Cambiar tamaño del trazo con pitch o amp
-               this.setTam(gestorAmp.filtrada);
+               //this.setTam(gestorAmp.filtrada);
                //cambiar opacidad con pitch
-               this.setOpacidad (gestorPitch.filtrada);
+               //this.setOpacidad (gestorPitch.filtrada);
                this.vueltas++;
               }
                 }
      //con esto se puede actualizar en tiempo real pero no queda muy bien quizas regulando el 3er y cuarto parametro si    
-    //aca mismo se puede actualizar la saturacion y el brillo de cualquiera de las dos maneras
      actualizar_conpitch (pitch){
       this.alpha_f=map(pitch,0,1,0,255);
       }
 
+      setBrillo(brillo){
+        this.brightness_f=map(brillo,AMP_MIN,AMP_MAX,0,255);
+      }
+
     setTam(tam){
-      this.tamaño=map(tam,0,1,15,35);
+      this.tamaño=map(tam,AMP_MIN,AMP_MAX,15,20);
     }
     //cambiar opacidad con pitch
-    setOpacidad (valor){
-      this.alpha_f = map(valor, 0, 1, 10, 255);
+    setOpacidad(valor){
+      this.alpha_f = map(valor, FREC_MIN, FREC_MAX, 0, 255);
   }
 
     dibujar_regulares(){
@@ -107,7 +110,6 @@ this.anguloimg= map(this.posX, 0, width,-90, +90);
       rotate(radians(this.anguloimg));
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
-      console.log(this.alpha_f);
     }
 
   }
