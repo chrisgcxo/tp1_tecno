@@ -1,7 +1,7 @@
 //to do list//
 //la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
 //hacer algo para determinar la posicion en funcion al pitch
-//levantar de varias mascaras al azar para cambiar la mascara en cada ejecucion
+//lo de la mascara en principio deberia estar solucionado, solo falta hacer mas mascaras
 class trazo_fig {
   constructor(imagen,trazo,paleta) {
     //margenes
@@ -25,8 +25,6 @@ class trazo_fig {
     this.saltar_principio_intervalo = 500; 
     //enmascarado//
     this.imagen= imagen;
-    this.x_mascara;
-    this.y_mascara;
     // trazo
      // Cambiar tamaño del trazo
      this.tam= random(15, 35);
@@ -44,7 +42,6 @@ class trazo_fig {
   //metodos 
   // metodo  para verificar si los trazos están en los píxeles oscuros de la imagen de mascara
     pertenece_a_la_forma() {
-      //aca tendría que hacer algunas modificaciones para que en lugar de levantar una imagen como parametro de entrada levante un array de imagenes
       let x_en_img = floor(map(this.posX_fig, 0, width, 0, this.imagen.width));
       let y_en_img = floor(map(this.posY_fig, 0, height, 0, this.imagen.height));
       let estepixel = this.imagen.get(x_en_img, y_en_img);

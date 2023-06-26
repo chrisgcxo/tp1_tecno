@@ -62,8 +62,9 @@ let tfon = [];
 let tfig = [];
 
 //imagenes y mascaras
-// Mascara figura
-let mascarafigura;
+//array de imgs mascara figura
+let mascarafigura=[];
+let index_mfig;
 // Array de imágenes de trazos figura
 let imgs_trazos = [];
 //objeto paleta
@@ -136,8 +137,22 @@ function preload() {
     });
   }
 
-    // Carga de la máscara figura
-    mascarafigura = loadImage('trazos/mascara_figura4.png');
+    // Carga de la máscara figura prueba
+    //fondo
+  // URLs de las imágenes de la mascara para la figura
+  let urls_mascfig = [
+    "trazos/mascara_figura3.jpg",
+    "trazos/mascara_figura4.png"
+  ];
+
+  // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
+  for (let l = 0; l < urls_mascfig.length; l++) {
+    loadImage(urls_mascfig[l], (img) => {
+   
+      mascarafigura.push(img); // Agregar la imagen cargada al array
+    });
+  }
+
 }
 
 
@@ -154,16 +169,17 @@ function setup() {
  //------MOTOR DE AUDIO-----
  userStartAudio(); // esto lo utilizo porque en algunos navigadores se cuelga el audio. Esto hace un reset del motor de audio (audio context)
 
-  //objeto paleta
-  //paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
-  //prueba con varias imgs
+ //obj palaeta de color
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
   background(255);
   colorMode(HSB);
+  //variable para elegir una mascara de figuras del array
+  index_mfig=floor(random(mascarafigura.length));
 }
 
 function draw() {
+
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
@@ -176,6 +192,8 @@ function draw() {
     }
      //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
     //paletas_color.debug(2);
+    //para debuggear la mascara de la figura
+  //console.log(index_mfig);
      //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
@@ -196,7 +214,7 @@ if(estado == "agregar"){
       y el 4to es para limitar la cantidad de vueltas por trazo para que no entren en loop*/
     tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,5);
   }
-    tfig[cantidad]= new trazo_fig(mascarafigura,imgs_trazos,paletas_color);
+    tfig[cantidad]= new trazo_fig(mascarafigura[index_mfig],imgs_trazos,paletas_color);
     //cada vez que se corta e inicia el sonido de nuevo se genera una posicion nueva
     tfig[cantidad].saltaralprincipio();
     cantidad++;
