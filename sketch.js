@@ -1,7 +1,9 @@
 //to do list
 //tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
-//RECALIBAR AMPLITUD y PITCH
-
+//RECALIBAR AMPLITUD y PITCH  ver video para calibrarlo
+//hacer algo para que no sea tan molesto completar la obra generar mas cantidad de trazos o modificar la velocidad
+//pensar en los estados
+//agregar mas interaccion con el pitch
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -111,7 +113,10 @@ function preload() {
   let urls_pfig = [
     "paleta/paleta_figura2.png",
     "paleta/paleta_figura3.jpg",
-    "paleta/paleta_figura4.jpg",
+    "paleta/paleta_figura4f.jpg",
+    "paleta/paleta_figura5f.png",
+    "paleta/paleta_figura6f.png",
+    "paleta/paleta_figura7f.png"
   ];
 
   // Carga de las imágenes de trazos figura en el array imagen_paleta_figura
@@ -126,7 +131,11 @@ function preload() {
   // URLs de las imágenes de la paleta de colores de los trazos fondo
   let urls_pfon = [
     "paleta/paleta_fondo.jpg",
-    "paleta/paleta_fondo_2.jpg"
+    "paleta/paleta_fondo_2.jpg",
+    "paleta/paleta_fondo_3.jpg",
+    "paleta/paleta_fondo_4.jpg",
+    "paleta/paleta_fondo_5.jpg",
+    "paleta/paleta_fondo_6.jpg"
   ];
 
   // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
@@ -142,7 +151,11 @@ function preload() {
   // URLs de las imágenes de la mascara para la figura
   let urls_mascfig = [
     "trazos/mascara_figura3.jpg",
-    "trazos/mascara_figura4.png"
+    "trazos/mascara_figura4.png",
+    "trazos/mascara_figura5.jpg",
+    "trazos/mascara_figura6.jpg",
+    "trazos/mascara_figura7.jpg",
+    "trazos/mascara_figura8.jpg"
   ];
 
   // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
@@ -172,8 +185,8 @@ function setup() {
  //obj palaeta de color
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
-  background(255);
-  colorMode(HSB);
+  //background(255);
+  //colorMode(HSB);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
 }
@@ -212,9 +225,11 @@ if(estado == "agregar"){
     if(cantidad <cantidad_max){
       /*el 3er parametro son para contar la cantidad de veces que saltar al principio se activa 
       y el 4to es para limitar la cantidad de vueltas por trazo para que no entren en loop*/
-    tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,5);
+    tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,20);
+     //establece una saturacion cada vez que se corta e inicia de nuevo un sonido
+    tfon[cantidad].SetBrillo(gestorAmp.filtrada);
   }
-    tfig[cantidad]= new trazo_fig(mascarafigura[index_mfig],imgs_trazos,paletas_color);
+    tfig[cantidad]= new trazo_fig(mascarafigura[index_mfig],imgs_trazos,paletas_color,gestorAmp.filtrada);
     //cada vez que se corta e inicia el sonido de nuevo se genera una posicion nueva
     tfig[cantidad].saltaralprincipio();
     cantidad++;
@@ -235,11 +250,13 @@ if(estado == "agregar"){
   if(cantidad <cantidad_max){
     for(let k = 0; k<cantidad;k++){
       tfon[k].dibujar_regulares();
+      //tfon[k].dibujar_irregulares(5);
       tfon[k].movertrazo_f();
       //cambiar tamaño con volumen
       tfon[k].setTam(gestorAmp.filtrada);
-      //cambiar la saturacion con el amp;
-      tfon[k].setBrillo(gestorAmp.filtrada);
+      //cambiar velocidad del trazo
+      tfon[k].SetVelocidad(gestorAmp.filtrada);
+      tfon[k].setSerpenteo(gestorAmp.filtrada);
     }
      }
 

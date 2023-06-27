@@ -1,12 +1,14 @@
 //to do list//
-//la opacidad progresivamente a medida que se hacen largos o a medida que se acercan a los bordes de la pantalla//
-//hacer algo para determinar la posicion en funcion al pitch
-//lo de la mascara en principio deberia estar solucionado, solo falta hacer mas mascaras
+//solucionar por que se generan los trazos practicamente en el mismo lugar
 class trazo_fig {
-  constructor(imagen,trazo,paleta) {
+  constructor(imagen,trazo,paleta,gestorAmp) {
+    //gestor sonido
+    this.gestorAmp = gestorAmp;
     //margenes
     this.margen_tfig=10;
     //movimiento
+    // Establecer la posición inicial en función del valor filtrado de amplitud
+    this.posX_fig2 = map(this.gestorAmp, AMP_MIN, AMP_MAX, this.margen_tfig, width-this.margen_tfig);
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     this.dx_fig;
@@ -19,6 +21,12 @@ class trazo_fig {
     de esta forma se respeta la gama de colores porque establece un paralelismo entre la posy del trazo
     y la forma en la que se agrupan los colores en la imagen original*/
     this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
+    //HSBA
+    this.hue_fig=this.colorsegun_y.hue;
+    this.saturation_fig=this.colorsegun_y.saturation;
+    this.brightness_fig=this.colorsegun_y.brightness;
+    this.alpha_fig=this.colorsegun_y.alpha;
+  
  
     this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
@@ -49,6 +57,19 @@ class trazo_fig {
       //manda true cada vez que el brillo de un pixel de la img de mascara es menor a 50//
       return brightness(estepixel) <50; 
       //aca podría hacer algo para modificar la opacidad en funcion a acercarse a los bordes
+    }
+//generar posicion aleatoria pero dentro de la mascara
+    generarPosicionEnMascara() {
+      let posicionValida = false;
+    
+      while (!posicionValida) {
+        this.posX_fig = random(this.margen_tfig, width - this.margen_tfig);
+        this.posY_fig = random(this.margen_tfig, height - this.margen_tfig);
+    
+        if (this.pertenece_a_la_forma()) {
+          posicionValida = true;
+        }
+      }
     }
 
     //metodo para verificar si se sale de los margenes  de la pantalla
@@ -104,27 +125,16 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
   }
 
 
-
+//reset de los trazos
   saltaralprincipio() {
-
- //quizas en lugar de hacer la comprobacion con el mouseX podria hacerlo con gestorAmp.filtrada o el pitch
-    //sector arriba eje y
-    if (mouseY >= height/2+50) {
-      // Generar trazos al azar desde el punto cero de la pantalla a la mitad (izquierda)
-      this.posX_fig = random(0, width/3+100);
-    } 
-    //sector abajo eje y
-    else if (mouseY < height/2-50) {
-      // Generar trazos al azar desde la mitad hasta el ancho de la pantalla (derecha)
-      this.posX_fig = random(width/3*2-100, width);
-    }
-    //sector medio eje ydiam
-     else{
-      //generar trazos al azar en el sector del medio de la pantalla
-      this.posX_fig = random(width/3*2-100, width/3+100);
-    }
+  // Establecer la posición inicial en función del valor filtrado de amplitud
+  this.posX_fig =random(this.margen_tfig,width-this.margen_tfig);
     //cambiar color segun pos en Y
     this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
+    //HSBA
+    this.hue_fig=this.colorsegun_y.hue;
+    this.saturation_fig=this.colorsegun_y.saturation;
+    this.brightness_fig=this.colorsegun_y.brightness;
     //dar posicion al azar en y
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
@@ -138,11 +148,21 @@ this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,20);
 
 
   dibujar() {
-// Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes y si hay sonido(ESTADO)//
+    // Calcular el centro de this.imagen
+    let centroX_imagen = this.imagen.width / 2;
+    let centroY_imagen = this.imagen.height / 2;
+  
+    // Calcular la distancia desde el centro de this.imagen
+    let distanciaCentroImagen = dist(this.posX_fig, this.posY_fig, centroX_imagen, centroY_imagen);
+  
+    // Mapear la opacidad en función de la distancia al centro de this.imagen
+     this.alpha_fig = map(distanciaCentroImagen, 0, height / 2, 1, 0.5);  
+// Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes//
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
   //trazos con imgs//
-  tint(this.colorsegun_y);
+  tint(this.hue_fig,this.saturation_fig,this.brightness_fig,this.alpha_fig);
+  //tint(this.colorsegun_y);
   rotate(radians(this.anguloimg2));
   image(this.trazo,this.posX_fig,this.posY_fig,this.tam,this.tam);
   pop();
