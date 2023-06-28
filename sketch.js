@@ -1,33 +1,36 @@
 //to do list
 //tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
-//RECALIBAR AMPLITUD y PITCH  ver video para calibrarlo
+//ver video para revisar si hice algo mal con el pitch, porque no hay manera no funciona
 //hacer algo para que no sea tan molesto completar la obra generar mas cantidad de trazos o modificar la velocidad
 //pensar en los estados
 //agregar mas interaccion con el pitch
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
-let AMP_MIN = 0.01; // umbral mínimo de sonido qiu supera al ruido de fondo
+let AMP_MIN = 0.01; // umbral mínimo de sonido que supera al ruido de fondo
 let AMP_MAX = 0.2 // amplitud máxima del sonido
 //pitch minimo y maximo
-let FREC_MIN = 90;
-let FREC_MAX = 350;
+let FREC_MIN = 900;
+let FREC_MAX = 2000;
 //amortiguacion de ruido
-let AMORTIGUACION = 0.9; // factor de amortiguación de la señal
 //mostrar grafico para debug
 let IMPRIMIR = false;
 
 //variables estados
+//variable para indicar cantidad de objetos
+let cantidad_tf=0;
+let cantidad_tfig=0;
+let cantidad_max=1;
+let cantidad_max_tf=40;
+let cantidad_max_tfig=10;
+
 //tiempo
 let marca;
 let tiempoLimiteAgregar = 3000;
-let tiempoLimiteGrosor = 3000;
-let tiempoLimiteColor = 3000;
+let tiempoLimiteSaltar=3000;
 let tiempoLimiteFin = 3000;
 
-//variable para indicar cantidad de objetos
-let cantidad=0;
-let cantidad_max=5;
+
 
 
 //----MICROFONO----
@@ -56,6 +59,7 @@ let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma 
 
 //estado inicial de los objetos//
 let estado="agregar";
+let bandera="inactiva";
 
 //obtejos 
 // Array de objetos Trazo_f
@@ -79,7 +83,6 @@ let imagen_paleta_figura=[];
 
 // Carga de recursos antes de iniciar el sketch
 function preload() {
-
 
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
@@ -178,163 +181,101 @@ function setup() {
  //----GESTOR----
  gestorAmp = new GestorSenial(AMP_MIN, AMP_MAX); // inicilizo en goestor con los umbrales mínimo y máximo de la señal
  gestorPitch= new GestorSenial(FREC_MIN,FREC_MAX);
- gestorAmp.f = AMORTIGUACION;
  //------MOTOR DE AUDIO-----
  userStartAudio(); // esto lo utilizo porque en algunos navigadores se cuelga el audio. Esto hace un reset del motor de audio (audio context)
 
  //obj palaeta de color
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
-  //background(255);
-  //colorMode(HSB);
+background(255);
+colorMode(HSB);
+  //es lo que mas se parece a la mezcla de acrilicos;
+  //blendMode(MULTIPLY);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
 }
 
 function draw() {
-
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
-  haySonido = gestorAmp.filtrada > AMP_MIN; //var para saber si hay sonido
-
-  diagrama_de_estados();
-  //console.log(estado);
-     if(IMPRIMIR){
-      printData();
-    }
-     //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
-    //paletas_color.debug(2);
-    //para debuggear la mascara de la figura
-  //console.log(index_mfig);
-     //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
-     antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
-}
- 
-
-
-function diagrama_de_estados(){
+  haySonido = gestorAmp.filtrada > 0.1; //umbral de ruido
   let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
   let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
 
-
+  if(bandera=="inactiva" && inicioElSonido){
+    bandera="activa";
+  }
+  
 if(estado == "agregar"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
-     // if para limitar la cantidad de veces que se crean los trazos del fondo
-    if(cantidad <cantidad_max){
-      /*el 3er parametro son para contar la cantidad de veces que saltar al principio se activa 
-      y el 4to es para limitar la cantidad de vueltas por trazo para que no entren en loop*/
-    tfon[cantidad] = new Trazo_f(trazofondo,paletas_color,0,20);
-     //establece una saturacion cada vez que se corta e inicia de nuevo un sonido
-    tfon[cantidad].SetBrillo(gestorAmp.filtrada);
-  }
-    tfig[cantidad]= new trazo_fig(mascarafigura[index_mfig],imgs_trazos,paletas_color,gestorAmp.filtrada);
-    //cada vez que se corta e inicia el sonido de nuevo se genera una posicion nueva
-    tfig[cantidad].saltaralprincipio();
-    cantidad++;
-  }
-  
+    if(cantidad_tf<cantidad_max_tf){
+      tfon[cantidad_tf] = new Trazo_f(trazofondo, paletas_color,10);
+    cantidad_tf++;
+    }
+    const cantidadAgregada = 3; // Número de trazos que deseas agregar cada vez
+    //es para agegar de a varios trazos para que no sea tan tedioso para el usuario
+    if (cantidad_tfig + cantidadAgregada <= cantidad_max_tfig ) {
+      for (let i = 0; i < cantidadAgregada; i++) {
+        tfig[cantidad_tfig] = new trazo_fig(mascarafigura[index_mfig], imgs_trazos, paletas_color, gestorAmp.filtrada);
+        tfig[cantidad_tfig].saltaralprincipio();
+      }
+      cantidad_tfig += cantidadAgregada;
+    }
 
-  
-
- //si la cantidad supera el maximo de trazos pasa al siguiente estado
-
-  if(cantidad >cantidad_max){
-    //estado = "grosor";
   }
-  
+
+//esto es el trigger para que se empiezen a dibujar solos los trazos del fondo la primera vez que se activa hay inicio el sonido
+  if(bandera=="activa"){
+    //es mejor con for each para que no genere conflicto con la cantidad; 
+    tfon.forEach((trazo) => {
+      trazo.dibujar_regulares();
+      trazo.movertrazo_f();
+    });
+   }
+  }
+   //mientras hay sonido 
   if(haySonido){ //Estado
-  // aca se podria cambiar la posicion en funcion al pitch
-  //crear trazos figura cuando se inicio el sonido//
-  if(cantidad <cantidad_max){
-    for(let k = 0; k<cantidad;k++){
-      tfon[k].dibujar_regulares();
-      //tfon[k].dibujar_irregulares(5);
-      tfon[k].movertrazo_f();
-      //cambiar tamaño con volumen
-      tfon[k].setTam(gestorAmp.filtrada);
-      //cambiar velocidad del trazo
-      tfon[k].SetVelocidad(gestorAmp.filtrada);
-      tfon[k].setSerpenteo(gestorAmp.filtrada);
-    }
-     }
 
-     for(let l=0; l<cantidad;l++){
-      //esto cambia el tamaño de los trazos
-      tfig[l].actualizar_conamp(gestorAmp.filtrada);
-      tfig[l].dibujar();
-      tfig[l].mover();
-    }
-  }
+      tfon.forEach((trazo) => {
+        //cambiar tamaño con volumen
+        trazo.setTam(gestorAmp.filtrada);
+        trazo.SetVelocidad(gestorAmp.filtrada);
+        trazo.setSerpenteo(gestorAmp.filtrada);
+        //aca se puede modificar el largo
+      });
 
+      tfig.forEach((trazo) => {
+        trazo.actualizar_conamp(gestorAmp.filtrada);
+  //dibujar trazos figura cuando se inicio el sonido//
+        trazo.dibujar();
+        trazo.mover();
+      });
+    }
+//cuando no hay sonido
   if(finDelSonido){//Evento
     //empieza el contador de tiempo
     marca = millis();
   }
+
   //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
   if(!haySonido){ //Estado SILENCIO
     let ahora = millis();
     if(ahora > marca + tiempoLimiteAgregar){
-      estado = "grosor";
-      marca = millis();
-    }
-  }
-
-
-}else if (estado == "grosor"){
-
-  if(inicioElSonido){ //Evento
-  }
-
-  if(haySonido){ //Estado
-
-  }
-
-  if(finDelSonido){//Evento
-    marca = millis();
-  }
-
-  if(!haySonido){ //Estado SILENCIO
-    let ahora = millis();
-    if(ahora > marca + tiempoLimiteGrosor){
-
-      estado = "color";
-      marca = millis();
-    }
-  }
-
-}else if (estado == "color"){
-
-  if(inicioElSonido){ //Evento
-   //aca se podria actualizar el color
-  }
-
-  if(haySonido){ //Estado
- 
-  }
-
-  if(finDelSonido){//Evento
-    marca = millis();
-  }
-  
-  if(!haySonido){ //Estado SILENCIO
-    let ahora = millis();
-    if(ahora > marca + tiempoLimiteColor){
-
       estado = "fin";
       marca = millis();
     }
   }
-  //si hago un sonido de 3 seg se reinicia 
-}else if (estado == "fin"){
+ 
+  //para pasar a reinicio hay que hacer ruido 3 segundos
+else if (estado == "fin"){
 
   if(inicioElSonido){ //Evento
     marca = millis();
   }
 
   if(haySonido){ //Estado
-
     let ahora = millis();
     if(ahora > marca + tiempoLimiteFin){
       estado = "reinicio";
@@ -348,24 +289,41 @@ if(estado == "agregar"){
   if(!haySonido){ //Estado SILENCIO
   }
   
-}else if (estado == "reinicio"){
+}
 
-  cantidad = 0;
-  estado = "agregar";
+else if (estado == "reinicio"){
+  cantidad_tf=0;
+  cantidad_tfig=0;
+  tfon=[];
+  tfig=[];
+  estado ="agregar";
   marca = millis();
 }
-//console.log(estado);
-//console.log(cantidad);
+
+
+     if(IMPRIMIR){
+      printData();
+    }
+     //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
+    //paletas_color.debug(2);
+    //para debuggear la mascara de la figura
+  //console.log(index_mfig);
+  console.log(estado);
+     //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
+     antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
+ 
+
+
 
 
 
 
 function printData(){
 background(255);
-ellipse(width/2, height-amp * 300, 30, 30);
-gestorAmp.dibujar(100, 500);
-gestorPitch.dibujar(100, 250);
+//gestorAmp.dibujar(100, 500);
+//console.log(gestorAmp.filtrada);
+//gestorPitch.dibujar(100, 250);
 }
 
 // ---- Pitch detection ---

@@ -38,16 +38,29 @@ class paleta {
   //ver si no me conviene retornar todos los parametros del color por separado
   //paleta figura
   darUnColor_figura(posY) {
-    let x = int(random(this.imagenPaleta_figura.width));
-    let y = int(posY);
+    let x, y, pixelColor;
     
-    let pixelColor = this.imagenPaleta_figura.get(x, y);
-    
-    let { hue, saturation, brightness, alpha } = rgbToHsb(pixelColor);
-    
-    return { hue, saturation, brightness, alpha };
-
+    do {
+      x = int(random(this.imagenPaleta_figura.width));
+      y = int(posY);
+      
+      pixelColor = this.imagenPaleta_figura.get(x, y);
+      
+      let alphaValue = alpha(pixelColor);
+      
+      // Verificar si el píxel es transparente (alpha = 0)
+      if (alphaValue === 0) {
+        // Generar nuevas coordenadas y obtener un nuevo píxel
+        continue;
+      }
+      
+      // Convertir a HSB
+      let { hue, saturation, brightness } = rgbToHsb(pixelColor);
+      
+      return { hue, saturation, brightness, alpha: alphaValue };
+    } while (true);
   }
+  
 
 }
 

@@ -1,5 +1,6 @@
 //to do list//
 //solucionar por que se generan los trazos practicamente en el mismo lugar
+//hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 class trazo_fig {
   constructor(imagen,trazo,paleta,gestorAmp) {
     //gestor sonido
@@ -13,7 +14,7 @@ class trazo_fig {
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     this.dx_fig;
     this.dy_fig;
-    this.vel_fig = random(2, 7);
+    this.vel_fig = random(4, 7);
     this.angulo_fig;
     //color
     this.paleta=paleta;
@@ -27,17 +28,17 @@ class trazo_fig {
     this.brightness_fig=this.colorsegun_y.brightness;
     this.alpha_fig=this.colorsegun_y.alpha;
   
- 
+ //saltar al principio
     this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
-    this.saltar_principio_intervalo = 500; 
+    this.saltar_principio_intervalo =500; 
     //enmascarado//
     this.imagen= imagen;
     // trazo
      // Cambiar tamaño del trazo
      this.tam= random(15, 35);
     //largo inicial trazo
-     this.largo_trazo = 0.05;
+     this.largo_trazo =0;
       
   // Asignar un índice aleatorio al array de imagenes para los trazos
   this.trazo = trazo;
@@ -57,20 +58,10 @@ class trazo_fig {
       //manda true cada vez que el brillo de un pixel de la img de mascara es menor a 50//
       return brightness(estepixel) <50; 
       //aca podría hacer algo para modificar la opacidad en funcion a acercarse a los bordes
+     //generar posicion aleatoria pero dentro de la mascara
+   
     }
-//generar posicion aleatoria pero dentro de la mascara
-    generarPosicionEnMascara() {
-      let posicionValida = false;
-    
-      while (!posicionValida) {
-        this.posX_fig = random(this.margen_tfig, width - this.margen_tfig);
-        this.posY_fig = random(this.margen_tfig, height - this.margen_tfig);
-    
-        if (this.pertenece_a_la_forma()) {
-          posicionValida = true;
-        }
-      }
-    }
+
 
     //metodo para verificar si se sale de los margenes  de la pantalla
     esta_en_margenes(){
@@ -97,12 +88,10 @@ class trazo_fig {
     this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
     // Incrementar o decrementar largo_trazo en función de mouseX//
     this.largo_trazo+= map(mouseX, 0, width, -1, 1);// no si sirve tanto este map cuando aplicamos el sonido
-    this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
     //se verifica si pasó el intervalo mínimo desde el último salto al principio antes de llamar a la función
     if (millis() > this.saltar_principio_timer + this.saltar_principio_intervalo) {
       if (this.largo_trazo >= max_largo_trazo || !this.pertenece_a_la_forma()) {
         this.saltaralprincipio();
-        this.saltar_principio_timer = millis();
       }
     } 
 
@@ -120,7 +109,7 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
     
     let variacionSerpenteo=1;
     //variables de movimiento//
-    this.posY_fig = this.posY_fig + this.dy_fig+random(-variacionSerpenteo,+variacionSerpenteo);
+    this.posY_fig = this.posY_fig + this.dy_fig;
     this.posX_fig = this.posX_fig + this.dx_fig+random(-variacionSerpenteo,+variacionSerpenteo);   
   }
 
@@ -128,7 +117,9 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
 //reset de los trazos
   saltaralprincipio() {
   // Establecer la posición inicial en función del valor filtrado de amplitud
-  this.posX_fig =random(this.margen_tfig,width-this.margen_tfig);
+  this.posX_fig2=map(this.gestorAmp, AMP_MIN, AMP_MAX, this.margen_tfig, width-this.margen_tfig);
+  this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
+  this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     //cambiar color segun pos en Y
     this.colorsegun_y=this.paleta.darUnColor_figura(this.posY_fig);
     //HSBA
@@ -136,9 +127,9 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
     this.saturation_fig=this.colorsegun_y.saturation;
     this.brightness_fig=this.colorsegun_y.brightness;
     //dar posicion al azar en y
-    this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
+        this.saltar_principio_timer = millis();
   }
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 

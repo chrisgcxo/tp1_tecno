@@ -1,14 +1,13 @@
 //to do list//
 //probar con diferentes mascaras y tipos de trazos//
-/*hacer algo con el fondo para que no se acumulen tantos trazos(bajar la opacidad prograsivamente
-o limitar la cantidad de vueltas que dan los caminantes,hecho pero revisar ajustar la cantidad de vueltas*/
+/*hacer algo con el fondo para que no se acumulen tantos trazos(bajar la opacidad prograsivamente o dibujarlos en un pgraphics*/
 //pensar si combiene esto :hacer otro grupo de trazos mas irregulares en los que se pueda variar mas el serpenteo//
 //podria hacer lo que hice con la paleta para el trazo de la figura pero a raiz del x del trazo
 //revisar tamaño, opacidad, saturacion, brillo etc
 //podría poner mas variedad de trazos
 //terminar trazos irregulares
 class Trazo_f {
-  constructor(quetrazo,paleta,vueltas,max_vueltas) {
+  constructor(quetrazo,paleta,maxVueltas) {
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
     //tamaño trazos
@@ -20,11 +19,10 @@ class Trazo_f {
     //vars movimiento//
     this.posX=random(width);
     this.posY=height;
-    this.posYInicial=random(height);
     this.dx;
     this.dy;
     //serpenteo
-    this.variacionSerpenteo=2;
+    this.variacionSerpenteo=1;
     this.variacionSerpenteo2=random(50,10);
     this.vel =2;
     //angulos caminantes
@@ -40,10 +38,11 @@ class Trazo_f {
     this.saturation_f=this.colorandom.saturation;
     this.brightness_f=this.colorandom.brightness;
     this.alpha_f =this.colorandom.alpha;
+        //saltar al principio
     //cantidad de vueltas que dan los caminantes
-    this.vueltas=vueltas;
-    this.max_vueltas=max_vueltas;
-    //saltar al principio
+    this.vueltas=0;
+    this.activaciones=0;
+    this.maxVueltas=maxVueltas;
     this.pasoeltiempo; 
     this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
@@ -52,8 +51,6 @@ class Trazo_f {
   
 
     movertrazo_f() {
-
-
   //map para el angulo de los caminantes
   this.angulo = map(this.posX, 0, width, this.anguloInicial_fig - 90, this.anguloInicial_fig + 90);
 // map para el rotate de las imgs hay que probar si es mejor con 0 como está
@@ -91,7 +88,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
              // espacio toroidal//
              saltaralprincipio_f() {
               //si las cantidad de vueltas que dieron los trazos es menor a la cantidad maxima y limit saltar devuelve true
-              if (this.vueltas<this.max_vueltas && this.limit_saltar_tf()){
+              if (this.activaciones< this.maxVueltas && this.limit_saltar_tf()){
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
               this.posX= random(width);
               // resetea el trazo a afuera de la pantalla abajo//
@@ -102,8 +99,8 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
               this.hue_f=this.colorandom.hue;
               this.saturation_f=this.colorandom.saturation;
               this.brightness_f=this.colorandom.brightness;
-               this.vueltas++;
                this.saltar_principio_timer = millis();
+               this.activaciones++;
               }
                 }
 
@@ -159,10 +156,8 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
     fill(this.hue_f, this.saturation_f, this.brightness_f, this.alpha_f);
     ellipse(this.posX,this.posY,this.tamaño2,this.tamaño2);
      // Verificar la longitud del trazo se podría pasar por fuera de la funcion un argumento dinamico para limitar la longitud
-  if (abs(this.posY - this.posYInicial) > longitudMaxima){
   // Restablecer la posición inicial o realizar alguna acción adicional
  this.saltaralprincipio_f();
-  }
       pop()
     }
   }
