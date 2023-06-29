@@ -8,7 +8,7 @@
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.01; // umbral mínimo de sonido que supera al ruido de fondo
-let AMP_MAX = 0.2 // amplitud máxima del sonido
+let AMP_MAX = 0.4 // amplitud máxima del sonido
 //pitch minimo y maximo
 let FREC_MIN = 900;
 let FREC_MAX = 2000;
@@ -37,18 +37,11 @@ let tiempoLimiteFin = 3000;
 let mic;
 let audioContext;
 
-//-----AMPLITUD-----
-let amp; // variable para cargar la amplitud (volumen) ee la señal de entrada del mic
-
+const model_url = 'https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/';
 
 //----GESTOR AMPITUD----
 let gestorAmp;
 
-
-//pitch del sonido (tono)
-let pitch;
-let tono;
-const model_url = 'https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/';
 //----GESTOR PITCH----
 let gestorPitch;
 
@@ -64,6 +57,7 @@ let bandera="inactiva";
 //obtejos 
 // Array de objetos Trazo_f
 let tfon = [];
+let tfon2 = [];
 // Array de objetos trazo_fig
 let tfig = [];
 
@@ -80,7 +74,7 @@ let paletas_color;
 let imagen_paleta_fondo=[];
 //array de imagenes para las paletas de la figura
 let imagen_paleta_figura=[];
-
+//////--------------------PRELOAD----------//////////
 // Carga de recursos antes de iniciar el sketch
 function preload() {
 
@@ -171,7 +165,7 @@ function preload() {
 
 }
 
-
+//------------SETUP------//
 function setup() {
  //----MICROFONO-----
  createCanvas(windowWidth, windowHeight);
@@ -194,15 +188,14 @@ colorMode(HSB);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
 }
-
+///-----------------DRAW---------///
 function draw() {
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
-  haySonido = gestorAmp.filtrada > 0.1; //umbral de ruido
+  haySonido = gestorAmp.filtrada >AMP_MIN; //umbral de ruido
   let inicioElSonido = haySonido && !antesHabiaSonido; // EVENTO inicio de sonido
   let finDelSonido = !haySonido && antesHabiaSonido; //EVENTO de fin de sonido;
-
   if(bandera=="inactiva" && inicioElSonido){
     bandera="activa";
   }
@@ -211,7 +204,7 @@ if(estado == "agregar"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     if(cantidad_tf<cantidad_max_tf){
-      tfon[cantidad_tf] = new Trazo_f(trazofondo, paletas_color,10);
+      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,10);
     cantidad_tf++;
     }
     const cantidadAgregada = 3; // Número de trazos que deseas agregar cada vez
@@ -245,6 +238,7 @@ if(estado == "agregar"){
         trazo.setSerpenteo(gestorAmp.filtrada);
         //aca se puede modificar el largo
       });
+
 
       tfig.forEach((trazo) => {
         trazo.actualizar_conamp(gestorAmp.filtrada);
@@ -314,10 +308,7 @@ else if (estado == "reinicio"){
 }
  
 
-
-
-
-
+////-----------------OTRAS FUNCIONES------/////
 
 function printData(){
 background(255);

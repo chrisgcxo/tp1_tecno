@@ -46,7 +46,7 @@ class trazo_fig {
   this.trazo = this.trazo[this.cual];
   }
 
-  //funciones y metodos//
+//funciones y metodos//
 
   //metodos 
   // metodo  para verificar si los trazos están en los píxeles oscuros de la imagen de mascara
@@ -59,7 +59,6 @@ class trazo_fig {
       return brightness(estepixel) <50; 
       //aca podría hacer algo para modificar la opacidad en funcion a acercarse a los bordes
      //generar posicion aleatoria pero dentro de la mascara
-   
     }
 
 
@@ -78,8 +77,7 @@ class trazo_fig {
   this.cual = floor(random(this.trazo.length));
 }
 
-    //funciones 
-
+//funciones 
 //funcion mover trazo//
   mover() { 
      //variable para el maximo del largo de un trazo//
@@ -159,7 +157,5 @@ if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   pop();
 }
   }
-
-
 }
 

@@ -6,7 +6,7 @@
 //revisar tamaño, opacidad, saturacion, brillo etc
 //podría poner mas variedad de trazos
 //terminar trazos irregulares
-class Trazo_f {
+class Trazo_f_regular{
   constructor(quetrazo,paleta,maxVueltas) {
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
@@ -25,6 +25,7 @@ class Trazo_f {
     this.variacionSerpenteo=1;
     this.variacionSerpenteo2=random(50,10);
     this.vel =2;
+
     //angulos caminantes
     this.anguloInicial_fig=270;
     this.angulo;
@@ -148,16 +149,4 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       pop();
     }
 
-    //esto es una prueba quiero hacer trazos que se muevan mas irregularmente
-    dibujar_irregulares(longitudMaxima){
-      push()
-    ellipseMode(CENTER);
-    noStroke();
-    fill(this.hue_f, this.saturation_f, this.brightness_f, this.alpha_f);
-    ellipse(this.posX,this.posY,this.tamaño2,this.tamaño2);
-     // Verificar la longitud del trazo se podría pasar por fuera de la funcion un argumento dinamico para limitar la longitud
-  // Restablecer la posición inicial o realizar alguna acción adicional
- this.saltaralprincipio_f();
-      pop()
-    }
   }
