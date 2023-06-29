@@ -26,8 +26,9 @@ let cantidad_max_tfig=400;
 
 //tiempo
 let marca;
-let tiempoLimiteAgregar = 3000;
-let tiempoLimiteSaltar=3000;
+let tiempoLimiteFondo = 3000;
+let tiempoLimiteFondoirregular = 3000;
+let tiempoLimiteFigura=3000;
 let tiempoLimiteFin = 3000;
 
 
@@ -51,12 +52,13 @@ let haySonido = false;
 let antesHabiaSonido = false; // memoria del estado de "haySonido" un fotograma atrás
 
 //estado inicial de los objetos//
-let estado="agregar";
+let estado="fondo";
 let bandera="inactiva";
 
 //obtejos 
 // Array de objetos Trazo_f
 let tfon = [];
+let tfon2 = [];
 // Array de objetos trazo_fig
 let tfig = [];
 
@@ -197,14 +199,93 @@ function draw() {
   if(bandera=="inactiva" && inicioElSonido){
     bandera="activa";
   }
-  
-if(estado == "agregar"){
+  //----------------ESTADO FONDO------------//
+if(estado == "fondo"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     if(cantidad_tf<cantidad_max_tf){
       tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,20);
     cantidad_tf++;
     }
+  }
+
+//esto es el trigger para que se empiezen a dibujar solos los trazos del fondo la primera vez que se activa hay inicio el sonido
+  if(bandera=="activa"){
+    //es mejor con for each para que no genere conflicto con la cantidad; 
+    tfon.forEach((trazo) => {
+      trazo.dibujar_regulares();
+      trazo.movertrazo_f();
+    });
+   }
+
+   //mientras hay sonido 
+  if(haySonido){ //Estado
+
+      tfon.forEach((trazo) => {
+        //cambiar tamaño con volumen
+        trazo.setTam(gestorAmp.filtrada);
+        trazo.SetVelocidad(gestorAmp.filtrada);
+        //aca se puede modificar el largo
+      });
+
+    }
+//cuando no hay sonido
+  if(finDelSonido){//Evento
+    //empieza el contador de tiempo
+    marca = millis();
+  }
+
+  //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
+  if(!haySonido){ //Estado SILENCIO
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteFondo){
+      estado = "figura";
+      marca = millis();
+    }
+  }
+}
+//----------ESTADO FONDO IRREGULAR------//
+/*if(estado == "fondo irregular"){
+  //cuando inicia el sonido
+  if(inicioElSonido){ //Evento
+    tfon.forEach((trazo) => {
+      trazo.saltaralprincipio_f();
+    });
+  }
+
+   //mientras hay sonido 
+  if(haySonido){ //Estado
+      tfon.forEach((trazo) => {
+        //cambiar tamaño con volumen
+        trazo.dibujar_regulares();
+        trazo.movertrazo_f();
+        trazo.setTam(gestorAmp.filtrada);
+        trazo.SetVelocidad(gestorAmp.filtrada);
+        trazo.setSerpenteo(gestorAmp.filtrada);
+        //aca se puede modificar el largo
+      });
+
+    }
+//cuando no hay sonido
+  if(finDelSonido){//Evento
+    //empieza el contador de tiempo
+    marca = millis();
+  }
+
+  //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
+  if(!haySonido){ //Estado SILENCIO
+    let ahora = millis();
+    if(ahora > marca + tiempoLimiteFondoirregular){
+      estado = "figura";
+      marca = millis();
+    }
+  }
+}*/
+ //-----------ESTADO FIGURA---------//
+ if(estado == "figura"){
+  //cuando inicia el sonido
+  if(inicioElSonido){ //Evento
+
     const cantidadAgregada =100; // Número de trazos que deseas agregar cada vez
     //es para agegar de a varios trazos para que no sea tan tedioso para el usuario
     if (cantidad_tfig + cantidadAgregada <= cantidad_max_tfig ) {
@@ -217,25 +298,9 @@ if(estado == "agregar"){
 
   }
 
-//esto es el trigger para que se empiezen a dibujar solos los trazos del fondo la primera vez que se activa hay inicio el sonido
-  if(bandera=="activa"){
-    //es mejor con for each para que no genere conflicto con la cantidad; 
-    tfon.forEach((trazo) => {
-      trazo.dibujar_regulares();
-      trazo.movertrazo_f();
-    });
-   }
-  }
+
    //mientras hay sonido 
   if(haySonido){ //Estado
-      tfon.forEach((trazo) => {
-        //cambiar tamaño con volumen
-        trazo.setTam(gestorAmp.filtrada);
-        trazo.SetVelocidad(gestorAmp.filtrada);
-        trazo.setSerpenteo(gestorAmp.filtrada);
-        //aca se puede modificar el largo
-      });
-
       tfig.forEach((trazo) => {
         trazo.actualizar_conamp(gestorAmp.filtrada);
   //dibujar trazos figura cuando se inicio el sonido//
@@ -252,12 +317,13 @@ if(estado == "agregar"){
   //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
   if(!haySonido){ //Estado SILENCIO
     let ahora = millis();
-    if(ahora > marca + tiempoLimiteAgregar){
+    if(ahora > marca + tiempoLimiteFigura){
       estado = "fin";
       marca = millis();
     }
   }
- 
+}
+//----------------ESTADO FIN---------//
   //para pasar a reinicio hay que hacer ruido 3 segundos
 else if (estado == "fin"){
 
@@ -280,13 +346,13 @@ else if (estado == "fin"){
   }
   
 }
-
+//---------------Reinicio-////////////
 else if (estado == "reinicio"){
   cantidad_tf=0;
   cantidad_tfig=0;
   tfon=[];
   tfig=[];
-  estado ="agregar";
+  estado ="fondo";
   marca = millis();
 }
 

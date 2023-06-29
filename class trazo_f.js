@@ -24,7 +24,7 @@ class Trazo_f_regular{
     //serpenteo
     this.variacionSerpenteo=1;
     this.variacionSerpenteo2=random(50,10);
-    this.vel =2;
+    this.vel =random(2,4);
 
     //angulos caminantes
     this.anguloInicial_fig=270;
@@ -130,8 +130,8 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       this.vel=map(ampv,AMP_MIN,AMP_MAX,2,5);
        }
    //funcion para aumentar el serpenteo del trazo
-   setSerpenteo(amps){
-    this.variacionSerpenteo2=map(amps,AMP_MIN,AMP_MAX,10,50);
+   setSerpenteo(ampser){
+    this.variacionSerpenteo=map(ampser,AMP_MIN,AMP_MAX,random(this.variacionSerpenteo),random(this.variacionSerpenteo));
   }
 
     dibujar_regulares(){
