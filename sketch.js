@@ -21,8 +21,8 @@ let IMPRIMIR = false;
 let cantidad_tf=0;
 let cantidad_tfig=0;
 let cantidad_max=1;
-let cantidad_max_tf=40;
-let cantidad_max_tfig=10;
+let cantidad_max_tf=50;
+let cantidad_max_tfig=400;
 
 //tiempo
 let marca;
@@ -57,7 +57,6 @@ let bandera="inactiva";
 //obtejos 
 // Array de objetos Trazo_f
 let tfon = [];
-let tfon2 = [];
 // Array de objetos trazo_fig
 let tfig = [];
 
@@ -138,7 +137,6 @@ function preload() {
   // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
   for (let k = 0; k < urls_pfon.length; k++) {
     loadImage(urls_pfon[k], (img) => {
-   
       imagen_paleta_fondo.push(img); // Agregar la imagen cargada al array
     });
   }
@@ -204,10 +202,10 @@ if(estado == "agregar"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     if(cantidad_tf<cantidad_max_tf){
-      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,10);
+      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,20);
     cantidad_tf++;
     }
-    const cantidadAgregada = 3; // Número de trazos que deseas agregar cada vez
+    const cantidadAgregada =100; // Número de trazos que deseas agregar cada vez
     //es para agegar de a varios trazos para que no sea tan tedioso para el usuario
     if (cantidad_tfig + cantidadAgregada <= cantidad_max_tfig ) {
       for (let i = 0; i < cantidadAgregada; i++) {
@@ -230,7 +228,6 @@ if(estado == "agregar"){
   }
    //mientras hay sonido 
   if(haySonido){ //Estado
-
       tfon.forEach((trazo) => {
         //cambiar tamaño con volumen
         trazo.setTam(gestorAmp.filtrada);
@@ -238,7 +235,6 @@ if(estado == "agregar"){
         trazo.setSerpenteo(gestorAmp.filtrada);
         //aca se puede modificar el largo
       });
-
 
       tfig.forEach((trazo) => {
         trazo.actualizar_conamp(gestorAmp.filtrada);

@@ -9,6 +9,8 @@ class trazo_fig {
     this.margen_tfig=10;
     //movimiento
     // Establecer la posición inicial en función del valor filtrado de amplitud
+    this.max_largo_trazo = 100;
+    this.longitud_incremento = 1;
     this.posX_fig2 = map(this.gestorAmp, AMP_MIN, AMP_MAX, this.margen_tfig, width-this.margen_tfig);
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
@@ -29,9 +31,8 @@ class trazo_fig {
     this.alpha_fig=this.colorsegun_y.alpha;
   
  //saltar al principio
-    this.saltar_principio_timer = 0;
     //Intervalo mínimo en milisegundos entre saltos al principio
-    this.saltar_principio_intervalo =500; 
+    this.saltar_principio_intervalo =0; 
     //enmascarado//
     this.imagen= imagen;
     // trazo
@@ -80,18 +81,12 @@ class trazo_fig {
 //funciones 
 //funcion mover trazo//
   mover() { 
-     //variable para el maximo del largo de un trazo//
-    let max_largo_trazo = 0.05;
-    // Restringir largo_trazo dentro del rango permitido//
-    this.largo_trazo = constrain(this.largo_trazo, 0,max_largo_trazo);
-    // Incrementar o decrementar largo_trazo en función de mouseX//
-    this.largo_trazo+= map(mouseX, 0, width, -1, 1);// no si sirve tanto este map cuando aplicamos el sonido
+  // Incrementar la longitud del trazo
+  this.largo_trazo += this.longitud_incremento * this.vel_fig;
     //se verifica si pasó el intervalo mínimo desde el último salto al principio antes de llamar a la función
-    if (millis() > this.saltar_principio_timer + this.saltar_principio_intervalo) {
-      if (this.largo_trazo >= max_largo_trazo || !this.pertenece_a_la_forma()) {
+      if (this.largo_trazo >= this.max_largo_trazo || !this.pertenece_a_la_forma()) {
         this.saltaralprincipio();
       }
-    } 
 
     //angulos
     let anguloInicial=270;
@@ -127,12 +122,12 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
     //dar posicion al azar en y
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
-        this.saltar_principio_timer = millis();
+        this.largo_trazo = 0;
   }
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
 actualizar_conamp (amplitud){
-this.tam=map(amplitud,AMP_MIN,AMP_MAX,15,20);
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,10,15);
 }
 
 
