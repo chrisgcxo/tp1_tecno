@@ -8,7 +8,7 @@
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.01; // umbral mínimo de sonido que supera al ruido de fondo
-let AMP_MAX = 0.4 // amplitud máxima del sonido
+let AMP_MAX = 0.2 // amplitud máxima del sonido
 //pitch minimo y maximo
 let FREC_MIN = 900;
 let FREC_MAX = 2000;
