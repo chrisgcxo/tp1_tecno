@@ -45,7 +45,7 @@ class Trazo_f_regular{
     this.activaciones=0;
     this.maxVueltas=maxVueltas;
     this.pasoeltiempo; 
-    this.saltar_principio_timer = 0;
+    this.saltar_principio_timer =100;
     //Intervalo mínimo en milisegundos entre saltos al principio
     this.saltar_principio_intervalo = 500; 
   }  

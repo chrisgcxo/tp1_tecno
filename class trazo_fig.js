@@ -11,7 +11,6 @@ class trazo_fig {
     // Establecer la posición inicial en función del valor filtrado de amplitud
     this.max_largo_trazo = 100;
     this.longitud_incremento = 1;
-    this.posX_fig2 = map(this.gestorAmp, AMP_MIN, AMP_MAX, this.margen_tfig, width-this.margen_tfig);
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
     this.dx_fig;
@@ -37,7 +36,7 @@ class trazo_fig {
     this.imagen= imagen;
     // trazo
      // Cambiar tamaño del trazo
-     this.tam= random(15, 35);
+     this.tam= random(5, 10);
     //largo inicial trazo
      this.largo_trazo =0;
       
@@ -93,17 +92,15 @@ class trazo_fig {
     //map para la distribucion de trazo
     this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90,anguloInicial + 90);
     //map para el rotate de las imgs
-this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
+this.anguloimg2= map(this.posX_fig,0, width, -90, +90);
 
     //direccion en x
     this.dx_fig = this.vel_fig * cos(radians(this.angulo_fig));
     //direccion en y
     this.dy_fig = this.vel_fig * sin(radians(this.angulo_fig));
-    
-    let variacionSerpenteo=1;
     //variables de movimiento//
     this.posY_fig = this.posY_fig + this.dy_fig;
-    this.posX_fig = this.posX_fig + this.dx_fig+random(-variacionSerpenteo,+variacionSerpenteo);   
+    this.posX_fig = this.posX_fig + this.dx_fig;   
   }
 
 
@@ -127,7 +124,7 @@ this.anguloimg2= map(this.posX_fig, this.anguloInicial, width, -90, +90);
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
 actualizar_conamp (amplitud){
-this.tam=map(amplitud,AMP_MIN,AMP_MAX,10,15);
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,5,10);
 }
 
 
@@ -144,11 +141,13 @@ this.tam=map(amplitud,AMP_MIN,AMP_MAX,10,15);
 // Dibujar el trazo en el lienzo gráfico si pertenece a la forma y no está fuera de los margenes//
 if (this.esta_en_margenes() && this.pertenece_a_la_forma()) {
   push();
+  imageMode(CENTER);
+  translate(this.posX_fig,this.posY_fig);
   //trazos con imgs//
   tint(this.hue_fig,this.saturation_fig,this.brightness_fig,this.alpha_fig);
   //tint(this.colorsegun_y);
   rotate(radians(this.anguloimg2));
-  image(this.trazo,this.posX_fig,this.posY_fig,this.tam,this.tam);
+  image(this.trazo,0,0,this.tam,this.tam);
   pop();
 }
   }

@@ -7,7 +7,7 @@
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
-let AMP_MIN = 0.01; // umbral mínimo de sonido que supera al ruido de fondo
+let AMP_MIN = 0.04; // umbral mínimo de sonido que supera al ruido de fondo
 let AMP_MAX = 0.2 // amplitud máxima del sonido
 //pitch minimo y maximo
 let FREC_MIN = 900;
@@ -20,7 +20,6 @@ let IMPRIMIR = false;
 //variable para indicar cantidad de objetos
 let cantidad_tf=0;
 let cantidad_tfig=0;
-let cantidad_max=1;
 let cantidad_max_tf=50;
 let cantidad_max_tfig=400;
 
@@ -58,7 +57,6 @@ let bandera="inactiva";
 //obtejos 
 // Array de objetos Trazo_f
 let tfon = [];
-let tfon2 = [];
 // Array de objetos trazo_fig
 let tfig = [];
 
@@ -81,20 +79,19 @@ function preload() {
 
   // Trazo del fondo
   trazofondo = loadImage('trazos/trazofondo_prueba3.png');
-  // Mascara fondo
-  mascaratfondo = loadImage('trazos/mascara_trazo0.png');
+
 
   // Recursos figura
   // URLs de las imágenes de trazo figura
   let urls = [
-    "trazos/trazofigura_0.png",
+   "trazos/trazofigura_0.png",
     "trazos/trazofigura_01.png",
-    "trazos/trazofigura_02.png",
+    //"trazos/trazofigura_02.png",//este NO
     "trazos/trazofigura_03.png",
-    "trazos/trazofigura_04.png",
+    "trazos/trazofigura_04.png", 
     "trazos/trazofigura_05.png",
     "trazos/trazofigura_06.png",
-    "trazos/trazofigura_07.png"
+    "trazos/trazofigura_07.png" 
   ];
 
   // Carga de las imágenes de trazos figura en el array imgs_trazos
@@ -183,8 +180,6 @@ function setup() {
  
 background(255);
 colorMode(HSB);
-  //es lo que mas se parece a la mezcla de acrilicos;
-  //blendMode(MULTIPLY);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
 }
@@ -245,7 +240,7 @@ if(estado == "fondo"){
   }
 }
 //----------ESTADO FONDO IRREGULAR------//
-/*if(estado == "fondo irregular"){
+if(estado == "fondo"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     tfon.forEach((trazo) => {
@@ -280,7 +275,7 @@ if(estado == "fondo"){
       marca = millis();
     }
   }
-}*/
+}
  //-----------ESTADO FIGURA---------//
  if(estado == "figura"){
   //cuando inicia el sonido
@@ -348,6 +343,7 @@ else if (estado == "fin"){
 }
 //---------------Reinicio-////////////
 else if (estado == "reinicio"){
+  background(255);
   cantidad_tf=0;
   cantidad_tfig=0;
   tfon=[];
@@ -365,6 +361,7 @@ else if (estado == "reinicio"){
     //para debuggear la mascara de la figura
   //console.log(index_mfig);
   console.log(estado);
+  console.log(cantidad_tf);
      //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
