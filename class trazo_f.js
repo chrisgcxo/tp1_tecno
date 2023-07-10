@@ -1,19 +1,10 @@
-//to do list//
-//probar con diferentes mascaras y tipos de trazos//
-/*hacer algo con el fondo para que no se acumulen tantos trazos(bajar la opacidad prograsivamente o dibujarlos en un pgraphics*/
-//pensar si combiene esto :hacer otro grupo de trazos mas irregulares en los que se pueda variar mas el serpenteo//
-//podria hacer lo que hice con la paleta para el trazo de la figura pero a raiz del x del trazo
-//revisar tamaño, opacidad, saturacion, brillo etc
-//podría poner mas variedad de trazos
-//terminar trazos irregulares
 class Trazo_f_regular{
   constructor(quetrazo,paleta,maxVueltas) {
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
     //tamaño trazos
    // Tamaño aleatorio del trazo
-    this.tamaño = random(15, 35);
-    this.tamaño2 = random(8, 10);
+    this.tamaño =15;
     //variable para levantar la clase paleta
     this.paleta=paleta;
     //vars movimiento//
@@ -23,7 +14,6 @@ class Trazo_f_regular{
     this.dy;
     //serpenteo
     this.variacionSerpenteo=1;
-    this.variacionSerpenteo2=random(50,10);
     this.vel =random(2,4);
 
     //angulos caminantes
@@ -64,7 +54,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
 
   // variables de movimiento
   this.posY = this.posY + this.dy;
-  this.posX = this.posX + this.dx+random(-this.variacionSerpenteo,+this.variacionSerpenteo);
+  this.posX = this.posX + this.dx;
   //esto es para poder  generar mas variacion en los trazos irregulares
   
 
@@ -91,10 +81,10 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
               //si las cantidad de vueltas que dieron los trazos es menor a la cantidad maxima y limit saltar devuelve true
               if (this.activaciones< this.maxVueltas && this.limit_saltar_tf()){
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
-              this.posX= random(width);
+              //this.posX= random(width);
+              this.posX=random(width);
               // resetea el trazo a afuera de la pantalla abajo//
               this.posY=height;
-           
               //asignar color nuevo
               this.colorandom=this.paleta.darUnColor_fondo();
               this.hue_f=this.colorandom.hue;
@@ -111,8 +101,8 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
 //si las pongo en hay sonido se ejecutan contantemente
 //cambiar el tamaño en funcion a la amplitud
     setTam(ampt){
+      //no se porque pero con la amplitud me funciona
       this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,18);
-      this.tamaño2=map(ampt,AMP_MIN,AMP_MAX,8,10);
     }
     //elegir una opacidad nueva cara vez que empieza el sonido
    setAlpha(ampa){
@@ -120,19 +110,20 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
    }
        //elegir una saturación  nueva cara vez que empieza el sonido
        SetBrillo(ampb){
-        this.brightness_f=map(ampb,AMP_MIN,AMP_MAX,180,255);
+        this.brightness_f=map(ampb,AMP_MIN,AMP_MAX,-10,+10);
        }
        SetSat(amps){
         this.saturation_f=map(amps,AMP_MIN,AMP_MAX,180,255);
        }
        //esto es para modificar la velocidad del caminante
        SetVelocidad(ampv){
-      this.vel=map(ampv,AMP_MIN,AMP_MAX,2,5);
+      this.vel=this.vel*map(ampv,AMP_MIN,AMP_MAX,2,5);
        }
+    setposx(pitchx){
+      this.posX=map(pitchx,AMP_MIN,AMP_MAX,0,width);
+    }
    //funcion para aumentar el serpenteo del trazo
-   setSerpenteo(ampser){
-    this.variacionSerpenteo=map(ampser,AMP_MIN,AMP_MAX,random(this.variacionSerpenteo),random(this.variacionSerpenteo));
-  }
+
 
     dibujar_regulares(){
       // Calcular la distancia desde el centro de la pantalla

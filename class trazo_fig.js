@@ -1,6 +1,3 @@
-//to do list//
-//solucionar por que se generan los trazos practicamente en el mismo lugar
-//hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 class trazo_fig {
   constructor(imagen,trazo,paleta,gestorAmp) {
     //gestor sonido
@@ -9,7 +6,7 @@ class trazo_fig {
     this.margen_tfig=10;
     //movimiento
     // Establecer la posición inicial en función del valor filtrado de amplitud
-    this.max_largo_trazo = 100;
+    this.max_largo_trazo = 50;
     this.longitud_incremento = 1;
     this.posX_fig=random(this.margen_tfig,width-this.margen_tfig);
     this.posY_fig=random(this.margen_tfig,height-this.margen_tfig);
@@ -31,7 +28,7 @@ class trazo_fig {
   
  //saltar al principio
     //Intervalo mínimo en milisegundos entre saltos al principio
-    this.saltar_principio_intervalo =0; 
+    this.saltar_principio_intervalo =100; 
     //enmascarado//
     this.imagen= imagen;
     // trazo
@@ -124,10 +121,11 @@ this.anguloimg2= map(this.posX_fig,0, width, -90, +90);
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
 actualizar_conamp (amplitud){
-this.tam=map(amplitud,AMP_MIN,AMP_MAX,5,10);
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,8,12);
 }
-
-
+actualizar_conpitch(pitch){
+  this.max_largo_trazo=map(pitch,0,1,50,100);
+}
   dibujar() {
     // Calcular el centro de this.imagen
     let centroX_imagen = this.imagen.width / 2;

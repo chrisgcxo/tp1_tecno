@@ -1,6 +1,4 @@
 
-//unificar esteticasmente  imagenes de las que se extrae el color para las paletas
-//hacer mas paletas si llego 
 class paleta {
   constructor(imagenPaleta_fondo, imagenPaleta_figura) {
     this.imagenPaleta_fondo = this.elegirImagenAleatoria(imagenPaleta_fondo);

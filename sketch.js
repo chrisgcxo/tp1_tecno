@@ -1,18 +1,36 @@
 //to do list
-//tengo dos opciones o dibujo una de las dos cosas en un pgraphic o intento limitarlos como estoy haciendo
-//ver video para revisar si hice algo mal con el pitch, porque no hay manera no funciona
-//hacer algo para que no sea tan molesto completar la obra generar mas cantidad de trazos o modificar la velocidad
-//pensar en los estados
+//necesito generar trazos un poco mas caoticos
+//---------general------// 
+//funcion de vida a los trazos
 //agregar mas interaccion con el pitch
+//agregar serpenteo que podría funcionar con el pitch
+//ver hasta que punto se puden modificar los colores saturacion y brillo sin modificar demasiado los colores
+//revisar la cuestion de la opacidad en los bordes
+//la velocidad me parece que no va o hay que buscar una forma de que no sea demasiado capaz ponerle un constrain
+//--------trazos fondo---------///
+//pensar si combiene esto :hacer otro grupo de trazos mas irregulares en los que se pueda variar mas el serpenteo//
+//revisar tamaño, opacidad, saturacion, brillo etc
+//agregar otros trazos
+//-----Trazos figura---/////
+//solucionar por que se generan los trazos practicamente en el mismo lugar
+//hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
+//----Clase paleta --/////
+//unificar esteticasmente  imagenes de las que se extrae el color para las paletas
+//modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
+//hacer mas paletas si llego 
+
+//estetica revisar pinceles darle variacion de opacidad
+
+
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
-let AMP_MIN = 0.04; // umbral mínimo de sonido que supera al ruido de fondo
-let AMP_MAX = 0.2 // amplitud máxima del sonido
+let AMP_MIN = 0.020; // umbral mínimo de sonido que supera al ruido de fondo
+let AMP_MAX = 0.12 // amplitud máxima del sonido
 //pitch minimo y maximo
-let FREC_MIN = 900;
-let FREC_MAX = 2000;
-//amortiguacion de ruido
+let FREC_MIN = 80;
+let FREC_MAX = 350;
+
 //mostrar grafico para debug
 let IMPRIMIR = false;
 
@@ -20,13 +38,12 @@ let IMPRIMIR = false;
 //variable para indicar cantidad de objetos
 let cantidad_tf=0;
 let cantidad_tfig=0;
-let cantidad_max_tf=50;
+let cantidad_max_tf=20;
 let cantidad_max_tfig=400;
 
 //tiempo
 let marca;
 let tiempoLimiteFondo = 3000;
-let tiempoLimiteFondoirregular = 3000;
 let tiempoLimiteFigura=3000;
 let tiempoLimiteFin = 3000;
 
@@ -85,8 +102,8 @@ function preload() {
   // URLs de las imágenes de trazo figura
   let urls = [
    "trazos/trazofigura_0.png",
-    "trazos/trazofigura_01.png",
-    //"trazos/trazofigura_02.png",//este NO
+    //"trazos/trazofigura_01.png",//ESTE SE VE MAL
+    "trazos/trazofigura_02.png",
     "trazos/trazofigura_03.png",
     "trazos/trazofigura_04.png", 
     "trazos/trazofigura_05.png",
@@ -199,8 +216,8 @@ if(estado == "fondo"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     if(cantidad_tf<cantidad_max_tf){
-      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,20);
-    cantidad_tf++;
+        tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,20);
+        cantidad_tf++;   
     }
   }
 
@@ -215,11 +232,10 @@ if(estado == "fondo"){
 
    //mientras hay sonido 
   if(haySonido){ //Estado
-
       tfon.forEach((trazo) => {
         //cambiar tamaño con volumen
         trazo.setTam(gestorAmp.filtrada);
-        trazo.SetVelocidad(gestorAmp.filtrada);
+        //trazo.SetVelocidad(gestorAmp.filtrada); no me gusta que me despega el fondo
         //aca se puede modificar el largo
       });
 
@@ -238,57 +254,26 @@ if(estado == "fondo"){
       marca = millis();
     }
   }
-}
-//----------ESTADO FONDO IRREGULAR------//
-if(estado == "fondo"){
-  //cuando inicia el sonido
-  if(inicioElSonido){ //Evento
-    tfon.forEach((trazo) => {
-      trazo.saltaralprincipio_f();
-    });
-  }
 
-   //mientras hay sonido 
-  if(haySonido){ //Estado
-      tfon.forEach((trazo) => {
-        //cambiar tamaño con volumen
-        trazo.dibujar_regulares();
-        trazo.movertrazo_f();
-        trazo.setTam(gestorAmp.filtrada);
-        trazo.SetVelocidad(gestorAmp.filtrada);
-        trazo.setSerpenteo(gestorAmp.filtrada);
-        //aca se puede modificar el largo
-      });
 
-    }
 //cuando no hay sonido
   if(finDelSonido){//Evento
     //empieza el contador de tiempo
     marca = millis();
   }
-
-  //si estoy en silencio mas tiempo que el tiempo limite paso al siguiente estado
-  if(!haySonido){ //Estado SILENCIO
-    let ahora = millis();
-    if(ahora > marca + tiempoLimiteFondoirregular){
-      estado = "figura";
-      marca = millis();
-    }
-  }
 }
+
+
  //-----------ESTADO FIGURA---------//
  if(estado == "figura"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
 
-    const cantidadAgregada =100; // Número de trazos que deseas agregar cada vez
     //es para agegar de a varios trazos para que no sea tan tedioso para el usuario
-    if (cantidad_tfig + cantidadAgregada <= cantidad_max_tfig ) {
-      for (let i = 0; i < cantidadAgregada; i++) {
+    if (cantidad_tfig <= cantidad_max_tfig ) {
         tfig[cantidad_tfig] = new trazo_fig(mascarafigura[index_mfig], imgs_trazos, paletas_color, gestorAmp.filtrada);
         tfig[cantidad_tfig].saltaralprincipio();
-      }
-      cantidad_tfig += cantidadAgregada;
+      cantidad_tfig ++;
     }
 
   }
@@ -298,6 +283,7 @@ if(estado == "fondo"){
   if(haySonido){ //Estado
       tfig.forEach((trazo) => {
         trazo.actualizar_conamp(gestorAmp.filtrada);
+        trazo.actualizar_conpitch(gestorPitch.filtrada);
   //dibujar trazos figura cuando se inicio el sonido//
         trazo.dibujar();
         trazo.mover();
@@ -356,24 +342,24 @@ else if (estado == "reinicio"){
      if(IMPRIMIR){
       printData();
     }
-     //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
-    //paletas_color.debug(2);
-    //para debuggear la mascara de la figura
-  //console.log(index_mfig);
-  console.log(estado);
-  console.log(cantidad_tf);
      //variable para saber si en el fotograma anterior habia sonido esto siempre al final del draw
      antesHabiaSonido = haySonido; // guardo el estado del fotograma anteior
 }
  
 
 ////-----------------OTRAS FUNCIONES------/////
-
+///----DEBUG------//////
 function printData(){
-background(255);
+//background(255);
+//gestorPitch.dibujar(100, 250);
 //gestorAmp.dibujar(100, 500);
 //console.log(gestorAmp.filtrada);
-//gestorPitch.dibujar(100, 250);
+console.log(estado);
+//para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
+//paletas_color.debug(2);
+//para debuggear la mascara de la figura
+//console.log(index_mfig);
+//console.log(cantidad_tf);
 }
 
 // ---- Pitch detection ---
