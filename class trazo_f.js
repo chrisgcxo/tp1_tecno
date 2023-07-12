@@ -1,14 +1,15 @@
 class Trazo_f_regular{
   constructor(quetrazo,paleta,maxVueltas) {
+    //variable para el largo de los trazos irregulares
+    this.largo=0;
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
     //tamaño trazos
-   // Tamaño aleatorio del trazo
     this.tamaño =15;
     //variable para levantar la clase paleta
     this.paleta=paleta;
     //vars movimiento//
-    this.escalaruido=5;
+    this.escalaruido=0;
     this.posY=height;
     this.dx;
     this.dy;
@@ -85,7 +86,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
     }
              // espacio toroidal//
              saltaralprincipio_f() {
-              this.escalaruido=5;
+              this.escalaruido=0;
               //si las cantidad de vueltas que dieron los trazos es menor a la cantidad maxima y limit saltar devuelve true
               if (this.limit_saltar_tf()){
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
@@ -108,7 +109,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
 //cambiar el tamaño en funcion a la amplitud
     setTam(ampt){
       //no se porque pero con la amplitud me funciona
-      this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,17);
+      this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,16);
     }
 
        //elegir una saturación  nueva cara vez que empieza el sonido
@@ -125,7 +126,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
    
    //funcion para aumentar el serpenteo del trazo   
     setEscalaRuido(pitchE){
-    this.escalaruido=map(pitchE,0,1,5,30);
+    this.escalaruido=map(pitchE,0,1,0,30);
     }
 
 
@@ -134,7 +135,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
       // Calcular la distancia desde el centro de la pantalla
     let distanciaCentro = dist(this.posX,this.posY, width / 2, height / 2);
     //mapear la opacidad
-    this.alpha_f=map(distanciaCentro, 0, height / 2, 1, 0.6);
+    this.alpha_f=map(distanciaCentro, 0, height / 2, 0.5, 0.4);
       push();
       tint(this.hue_f, this.saturation_f, this.brightness_f, this.alpha_f);
       imageMode(CENTER);
@@ -144,4 +145,13 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
     }
+    
+    dibujar_irregulares(pitchi) {
+      // Cambio la posición al azar en la altura de la pantalla cada vez que hay sonido
+      this.posY = random(0 + this.tamaño, height - this.tamaño);
+      // Cambio la escala de pitch para que sea más curvado
+      this.escalaruido = map(pitchi, 0, 1, 20, 50);
+      //este map hace que los trazos sean mas transparentes a medida que agregamos mas 
+      this.alpha_f = map(cantidad_total_tf, 150, 200, 0, 1); 
+    } 
   }

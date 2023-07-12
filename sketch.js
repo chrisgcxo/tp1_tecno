@@ -31,8 +31,10 @@ let IMPRIMIR = false;
 //variables estados
 //variable para indicar cantidad de objetos
 let cantidad_tf=0;
+let cantidadagregar_tf=10;
+let cantidad_total_tf=0;
 let cantidad_tfig=0;
-let cantidad_max_tf=20;
+let cantidad_max_tf=25;
 let cantidad_max_tfig=400;
 
 //tiempo
@@ -212,13 +214,22 @@ if(estado == "fondo"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
     //condicional si la cantidad actual de objetos en el array  es menor a la cantidad maxima//
-      if(tfon.length<=cantidad_max_tf){
-  for(let i =0; i<2;i++){
-      //el 3er argumento es la cantidad de vueltas maxima por trazo
-      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,10);
-      cantidad_tf++;
-    }
-      }      
+    if (tfon.length < cantidad_max_tf) {
+      //este calculo determina cuantos trazos faltan para completar la cantidad maxima, para evitar generar mas trazos de los permitidos por la cantidad maxima
+      let trazosPorAgregar = Math.min(cantidadagregar_tf, cantidad_max_tf - tfon.length);
+      for (let i = 0; i < trazosPorAgregar; i++) {
+        tfon.push(new Trazo_f_regular(trazofondo, paletas_color, 3));
+        cantidad_tf++;
+        cantidad_total_tf++;
+      }
+    } 
+    //si la cantidad de trazos generados es mayor a 50 hacer trazos irregulares
+    if (cantidad_total_tf > 150) {
+      tfon.forEach((trazo) => {
+        cantidadagregar_tf=3;//cambio la cantidad a agregar    
+        trazo.dibujar_irregulares(gestorPitch.filtrada);
+  });
+    } 
   }
 
   //borrar trazos del fondo que se salieron de pantalla del array
@@ -228,8 +239,6 @@ if(estado == "fondo"){
     return dentroLimites && nopasolasvueltasmax;
   });
 
-  // Imprimir el contenido del array tfon
-//console.log("Trazos restantes:", tfon);
 
 //esto es el trigger para que se empiezen a dibujar solos los trazos del fondo la primera vez que se activa hay inicio el sonido
   if(bandera=="activa"){
@@ -274,10 +283,15 @@ if(estado == "fondo"){
 
 
  //-----------ESTADO FIGURA---------//
+ // Bandera
+let bandera_empezofigura = false;
  if(estado == "figura"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
-
+    //borro los objetos del array del fondo 
+    if(!bandera_empezofigura){
+      tfon=[];
+    }
     //es para agegar de a varios trazos para que no sea tan tedioso para el usuario
     if (cantidad_tfig <= cantidad_max_tfig ) {
         tfig[cantidad_tfig] = new trazo_fig(mascarafigura[index_mfig], imgs_trazos, paletas_color, gestorAmp.filtrada);
@@ -288,6 +302,8 @@ if(estado == "fondo"){
     tfig.forEach((trazo) => {
     trazo.SetBrillo(gestorAmp.filtrada);
   });
+     // Actualizar la bandera para indicar que la acción se ha realizado
+     bandera_empezofigura = true;
   }
 
 
@@ -348,6 +364,9 @@ else if (estado == "reinicio"){
   tfig=[];
   estado ="fondo";
   marca = millis();
+  cantidad_total_tf=0;
+// Bandera
+bandera_empezofigura = false;
 }
 
 
@@ -366,7 +385,7 @@ function printData(){
 //gestorPitch.dibujar(100, 250);
 //gestorAmp.dibujar(100, 500);
 //console.log(gestorAmp.filtrada);
-console.log(estado);
+//console.log(estado);
 //para probar si funciona la eleccion al azar de las paletas opc 1 es la paleta de la figura y 2 del fondo
 //paletas_color.debug(2);
 //para debuggear la mascara de la figura

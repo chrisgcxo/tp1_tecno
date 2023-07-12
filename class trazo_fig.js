@@ -33,7 +33,7 @@ class trazo_fig {
     this.imagen= imagen;
     // trazo
      // Cambiar tamaño del trazo
-     this.tam= random(5, 10);
+     this.tam=8;
     //largo inicial trazo
      this.largo_trazo =0;
      this.cuantavar=10;
@@ -117,6 +117,7 @@ this.anguloimg2= map(this.posX_fig,0, width, -90-random(this.cuantavar),+90+rand
         // variable para cambiar a una imagen aleatoria dentro del array de imgs// 
         this.elegirIndiceAleatorio();
         this.largo_trazo = 0;
+          this.tam=8;
   }
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
