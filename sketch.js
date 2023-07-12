@@ -1,27 +1,23 @@
 //to do list
-//necesito generar trazos un poco mas caoticos
+//necesito generar trazos un poco mas caoticos.
+//estetica revisar pinceles darle variacion de opacidad
+
 //---------general------// 
-//funcion de vida a los trazos
 //agregar mas interaccion con el pitch
-//agregar serpenteo que podría funcionar con el pitch
 //ver hasta que punto se puden modificar los colores saturacion y brillo sin modificar demasiado los colores
 //revisar la cuestion de la opacidad en los bordes
-//la velocidad me parece que no va o hay que buscar una forma de que no sea demasiado capaz ponerle un constrain
 //--------trazos fondo---------///
-//pensar si combiene esto :hacer otro grupo de trazos mas irregulares en los que se pueda variar mas el serpenteo//
-//revisar tamaño, opacidad, saturacion, brillo etc
 //agregar otros trazos
 //-----Trazos figura---/////
-//solucionar por que se generan los trazos practicamente en el mismo lugar
 //hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 //----Clase paleta --/////
 //unificar esteticasmente  imagenes de las que se extrae el color para las paletas
 //modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
 //hacer mas paletas si llego 
 
-//estetica revisar pinceles darle variacion de opacidad
 
 
+//tengo que ver donde pongo vueltas para que le sume a la variable vueltas podria ser algo tipo trazo.vueltas++ en saltar al principio y en el constructor de la clase 0 y las vueltas max con argumento para el momento de crear el trazo
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -33,7 +29,6 @@ let FREC_MAX = 350;
 
 //mostrar grafico para debug
 let IMPRIMIR = false;
-
 //variables estados
 //variable para indicar cantidad de objetos
 let cantidad_tf=0;
@@ -94,14 +89,15 @@ let imagen_paleta_figura=[];
 // Carga de recursos antes de iniciar el sketch
 function preload() {
 
-  // Trazo del fondo
-  trazofondo = loadImage('trazos/trazofondo_prueba3.png');
+// Trazo del fondo
+trazofondo = loadImage('trazos/trazofondo_prueba3.png');
 
 
   // Recursos figura
   // URLs de las imágenes de trazo figura
   let urls = [
    "trazos/trazofigura_0.png",
+   "trazos/trazofigura_0a.png",
     //"trazos/trazofigura_01.png",//ESTE SE VE MAL
     "trazos/trazofigura_02.png",
     "trazos/trazofigura_03.png",
@@ -202,6 +198,7 @@ colorMode(HSB);
 }
 ///-----------------DRAW---------///
 function draw() {
+  //console.log(tfon.length);
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
@@ -215,11 +212,25 @@ function draw() {
 if(estado == "fondo"){
   //cuando inicia el sonido
   if(inicioElSonido){ //Evento
-    if(cantidad_tf<cantidad_max_tf){
-        tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,20);
-        cantidad_tf++;   
+    //condicional si la cantidad actual de objetos en el array  es menor a la cantidad maxima//
+      if(tfon.length<=cantidad_max_tf){
+  for(let i =0; i<2;i++){
+      //el 3er argumento es la cantidad de vueltas maxima por trazo
+      tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,10);
+      cantidad_tf++;
     }
+      } 
+        
   }
+  //borrar trazos del fondo que se salieron de pantalla del array
+  tfon = tfon.filter((trazo) => {
+    const dentroLimites = trazo.posX >= 0 && trazo.posX <= width && trazo.posY>=0 && trazo.posY<=height;
+    const nopasolasvueltasmax = trazo.vueltas<=trazo.maxVueltas; 
+    return dentroLimites && nopasolasvueltasmax;
+  });
+
+  // Imprimir el contenido del array tfon
+//console.log("Trazos restantes:", tfon);
 
 //esto es el trigger para que se empiezen a dibujar solos los trazos del fondo la primera vez que se activa hay inicio el sonido
   if(bandera=="activa"){
@@ -235,6 +246,7 @@ if(estado == "fondo"){
       tfon.forEach((trazo) => {
         //cambiar tamaño con volumen
         trazo.setTam(gestorAmp.filtrada);
+        trazo.setEscalaRuido(gestorPitch.filtrada);
         //trazo.SetVelocidad(gestorAmp.filtrada); no me gusta que me despega el fondo
         //aca se puede modificar el largo
       });

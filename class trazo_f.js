@@ -8,13 +8,17 @@ class Trazo_f_regular{
     //variable para levantar la clase paleta
     this.paleta=paleta;
     //vars movimiento//
-    this.posX=random(width);
+    this.escalaruido=5;
     this.posY=height;
     this.dx;
     this.dy;
-    //serpenteo
-    this.variacionSerpenteo=1;
-    this.vel =random(2,4);
+    this.vel =random(4,6);
+
+  // Generar posición X con distribución gaussiana
+  const meanX = width / 2; // Media de la distribución
+  const stdDevX = width / 8; // Desviación estándar de la distribución
+  this.posX = randomGaussian(meanX, stdDevX);
+
 
     //angulos caminantes
     this.anguloInicial_fig=270;
@@ -43,7 +47,10 @@ class Trazo_f_regular{
 
     movertrazo_f() {
   //map para el angulo de los caminantes
-  this.angulo = map(this.posX, 0, width, this.anguloInicial_fig - 90, this.anguloInicial_fig + 90);
+  const ruido = noise(this.posX * 0.01) * 2 - 1; // Valor de ruido entre -1 y 1
+  const anguloRuido = ruido *this.escalaruido; // escala de ruido
+  this.angulo = map(this.posX, 0, width, this.anguloInicial_fig - 90, this.anguloInicial_fig + 90) + anguloRuido;
+  
 // map para el rotate de las imgs hay que probar si es mejor con 0 como está
 this.anguloimg= map(this.posX,0, width,-90,+90);
 
@@ -78,8 +85,9 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
     }
              // espacio toroidal//
              saltaralprincipio_f() {
+              this.escalaruido=5;
               //si las cantidad de vueltas que dieron los trazos es menor a la cantidad maxima y limit saltar devuelve true
-              if (this.activaciones< this.maxVueltas && this.limit_saltar_tf()){
+              if (this.limit_saltar_tf()){
               // le asigna una posicion en x al siguiente trazo que sale desde abajo//
               //this.posX= random(width);
               this.posX=random(width);
@@ -91,18 +99,16 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
               this.saturation_f=this.colorandom.saturation;
               this.brightness_f=this.colorandom.brightness;
                this.saltar_principio_timer = millis();
-               this.activaciones++;
+              this.vueltas++;
               }
                 }
-
-   
 
 //si las pongo en empezó el sonido se ejecutan una vez, cuando corta e inicia el sonido
 //si las pongo en hay sonido se ejecutan contantemente
 //cambiar el tamaño en funcion a la amplitud
     setTam(ampt){
       //no se porque pero con la amplitud me funciona
-      this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,18);
+      this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,17);
     }
     //elegir una opacidad nueva cara vez que empieza el sonido
    setAlpha(ampa){
@@ -119,10 +125,11 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
        SetVelocidad(ampv){
       this.vel=this.vel*map(ampv,AMP_MIN,AMP_MAX,2,5);
        }
-    setposx(pitchx){
-      this.posX=map(pitchx,AMP_MIN,AMP_MAX,0,width);
+   //funcion para aumentar el serpenteo del trazo   
+    setEscalaRuido(pitchE){
+    this.escalaruido=map(pitchE,0,1,5,30);
     }
-   //funcion para aumentar el serpenteo del trazo
+
 
 
     dibujar_regulares(){
@@ -139,5 +146,4 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       image(this.quetrazo,0,0, this.tamaño, this.tamaño); 
       pop();
     }
-
   }

@@ -87,9 +87,9 @@ class trazo_fig {
     //angulos
     let anguloInicial=270;
     //map para la distribucion de trazo
-    this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90,anguloInicial + 90);
+    this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90-random(40),anguloInicial + 90+random(40));
     //map para el rotate de las imgs
-this.anguloimg2= map(this.posX_fig,0, width, -90, +90);
+this.anguloimg2= map(this.posX_fig,0, width, -90-random(40),+90+random(40));
 
     //direccion en x
     this.dx_fig = this.vel_fig * cos(radians(this.angulo_fig));
@@ -121,10 +121,10 @@ this.anguloimg2= map(this.posX_fig,0, width, -90, +90);
    
 //esto es para cambiar el tamaño en funcion al sonido, para actualizar cosas constantemente 
 actualizar_conamp (amplitud){
-this.tam=map(amplitud,AMP_MIN,AMP_MAX,8,12);
+this.tam=map(amplitud,AMP_MIN,AMP_MAX,8,10);
 }
 actualizar_conpitch(pitch){
-  this.max_largo_trazo=map(pitch,0,1,50,100);
+  this.max_largo_trazo=map(pitch,0,1,50,150);
 }
   dibujar() {
     // Calcular el centro de this.imagen
