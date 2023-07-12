@@ -36,7 +36,7 @@ class trazo_fig {
      this.tam= random(5, 10);
     //largo inicial trazo
      this.largo_trazo =0;
-      
+     this.cuantavar=10;
   // Asignar un índice aleatorio al array de imagenes para los trazos
   this.trazo = trazo;
   this.cual = floor(random(this.trazo.length));
@@ -87,9 +87,9 @@ class trazo_fig {
     //angulos
     let anguloInicial=270;
     //map para la distribucion de trazo
-    this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90-random(40),anguloInicial + 90+random(40));
+    this.angulo_fig = map(this.posX_fig, 0, width, anguloInicial - 90-random(this.cuantavar),anguloInicial + 90+random(this.cuantavar));
     //map para el rotate de las imgs
-this.anguloimg2= map(this.posX_fig,0, width, -90-random(40),+90+random(40));
+this.anguloimg2= map(this.posX_fig,0, width, -90-random(this.cuantavar),+90+random(this.cuantavar));
 
     //direccion en x
     this.dx_fig = this.vel_fig * cos(radians(this.angulo_fig));
@@ -125,7 +125,18 @@ this.tam=map(amplitud,AMP_MIN,AMP_MAX,8,10);
 }
 actualizar_conpitch(pitch){
   this.max_largo_trazo=map(pitch,0,1,50,150);
+  this.cuantavar=map(pitch,0,1,10,40);
 }
+
+ //elegir una saturación  nueva cara vez que empieza el sonido
+SetBrillo(ampb){
+this.brilloOriginal=this.brightness_fig;
+let brilloNuevo = map(ampb, AMP_MIN, AMP_MAX, 40, 100); // Nuevo valor de brillo basado en la amplitud
+// Interpolar entre el brillo original y el nuevo brillo con un factor de interpolación
+let factorInterpolacion = 0.8; // Ajusta este valor para controlar la intensidad de la modificación del brillo
+this.brightness_fig = lerp(this.brilloOriginal, brilloNuevo, factorInterpolacion);
+       }
+
   dibujar() {
     // Calcular el centro de this.imagen
     let centroX_imagen = this.imagen.width / 2;

@@ -1,23 +1,22 @@
+//priorizar la estetica
+//hacer guion con las cosas a explicar 
+//grabar video no muy tarde y subir git
 //to do list
 //necesito generar trazos un poco mas caoticos.
 //estetica revisar pinceles darle variacion de opacidad
 
 //---------general------// 
-//agregar mas interaccion con el pitch
-//ver hasta que punto se puden modificar los colores saturacion y brillo sin modificar demasiado los colores
+//pensar si usar saturacion o brillo 
 //revisar la cuestion de la opacidad en los bordes
 //--------trazos fondo---------///
 //agregar otros trazos
 //-----Trazos figura---/////
+// revisar la cuestion de la curvatura de los trazos de la figura talvez exagerarla mas
 //hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 //----Clase paleta --/////
 //unificar esteticasmente  imagenes de las que se extrae el color para las paletas
 //modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
 //hacer mas paletas si llego 
-
-
-
-//tengo que ver donde pongo vueltas para que le sume a la variable vueltas podria ser algo tipo trazo.vueltas++ en saltar al principio y en el constructor de la clase 0 y las vueltas max con argumento para el momento de crear el trazo
 
 //----CONFIGURACION-----
 //amplitud minima y maxima
@@ -219,9 +218,9 @@ if(estado == "fondo"){
       tfon[cantidad_tf] = new Trazo_f_regular(trazofondo, paletas_color,10);
       cantidad_tf++;
     }
-      } 
-        
+      }      
   }
+
   //borrar trazos del fondo que se salieron de pantalla del array
   tfon = tfon.filter((trazo) => {
     const dentroLimites = trazo.posX >= 0 && trazo.posX <= width && trazo.posY>=0 && trazo.posY<=height;
@@ -247,8 +246,6 @@ if(estado == "fondo"){
         //cambiar tamaño con volumen
         trazo.setTam(gestorAmp.filtrada);
         trazo.setEscalaRuido(gestorPitch.filtrada);
-        //trazo.SetVelocidad(gestorAmp.filtrada); no me gusta que me despega el fondo
-        //aca se puede modificar el largo
       });
 
     }
@@ -287,7 +284,10 @@ if(estado == "fondo"){
         tfig[cantidad_tfig].saltaralprincipio();
       cantidad_tfig ++;
     }
-
+    //revisar si esto aporta algo y si ponerlo aca o en hay sonido
+    tfig.forEach((trazo) => {
+    trazo.SetBrillo(gestorAmp.filtrada);
+  });
   }
 
 

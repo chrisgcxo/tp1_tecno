@@ -52,7 +52,7 @@ class Trazo_f_regular{
   this.angulo = map(this.posX, 0, width, this.anguloInicial_fig - 90, this.anguloInicial_fig + 90) + anguloRuido;
   
 // map para el rotate de las imgs hay que probar si es mejor con 0 como está
-this.anguloimg= map(this.posX,0, width,-90,+90);
+this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
 
   // dirección en x
   this.dx = this.vel * cos(radians(this.angulo));
@@ -110,21 +110,19 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       //no se porque pero con la amplitud me funciona
       this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,17);
     }
-    //elegir una opacidad nueva cara vez que empieza el sonido
-   setAlpha(ampa){
-    this.alpha_f=map(ampa,AMP_MIN,AMP_MAX,0.7,1);
-   }
+
        //elegir una saturación  nueva cara vez que empieza el sonido
        SetBrillo(ampb){
-        this.brightness_f=map(ampb,AMP_MIN,AMP_MAX,-10,+10);
+        this.brilloOriginal=this.brightness_f;
+        let brilloNuevo = map(ampb, AMP_MIN, AMP_MAX, 50, 100); // Nuevo valor de brillo basado en la amplitud
+        // Interpolar entre el brillo original y el nuevo brillo con un factor de interpolación
+        let factorInterpolacion = 0.8; // Ajusta este valor para controlar la intensidad de la modificación del brillo
+        this.brightness_f = lerp(this.brilloOriginal, brilloNuevo, factorInterpolacion);
        }
        SetSat(amps){
         this.saturation_f=map(amps,AMP_MIN,AMP_MAX,180,255);
        }
-       //esto es para modificar la velocidad del caminante
-       SetVelocidad(ampv){
-      this.vel=this.vel*map(ampv,AMP_MIN,AMP_MAX,2,5);
-       }
+   
    //funcion para aumentar el serpenteo del trazo   
     setEscalaRuido(pitchE){
     this.escalaruido=map(pitchE,0,1,5,30);
