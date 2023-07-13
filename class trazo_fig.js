@@ -125,18 +125,10 @@ actualizar_conamp (amplitud){
 this.tam=map(amplitud,AMP_MIN,AMP_MAX,8,10);
 }
 actualizar_conpitch(pitch){
-  this.max_largo_trazo=map(pitch,0,1,50,150);
-  this.cuantavar=map(pitch,0,1,10,40);
+  this.max_largo_trazo=map(pitch,0,1,50,120);
+  this.cuantavar=map(pitch,0,1,10,60);
 }
 
- //elegir una saturación  nueva cara vez que empieza el sonido
-SetBrillo(ampb){
-this.brilloOriginal=this.brightness_fig;
-let brilloNuevo = map(ampb, AMP_MIN, AMP_MAX, 40, 100); // Nuevo valor de brillo basado en la amplitud
-// Interpolar entre el brillo original y el nuevo brillo con un factor de interpolación
-let factorInterpolacion = 0.8; // Ajusta este valor para controlar la intensidad de la modificación del brillo
-this.brightness_fig = lerp(this.brilloOriginal, brilloNuevo, factorInterpolacion);
-       }
 
   dibujar() {
     // Calcular el centro de this.imagen

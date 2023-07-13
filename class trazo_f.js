@@ -115,17 +115,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       this.tamaño=map(ampt,AMP_MIN,AMP_MAX,15,16);
     }
 
-       //elegir una saturación  nueva cara vez que empieza el sonido
-       SetBrillo(ampb){
-        this.brilloOriginal=this.brightness_f;
-        let brilloNuevo = map(ampb, AMP_MIN, AMP_MAX, 50, 100); // Nuevo valor de brillo basado en la amplitud
-        // Interpolar entre el brillo original y el nuevo brillo con un factor de interpolación
-        let factorInterpolacion = 0.8; // Ajusta este valor para controlar la intensidad de la modificación del brillo
-        this.brightness_f = lerp(this.brilloOriginal, brilloNuevo, factorInterpolacion);
-       }
-       SetSat(amps){
-        this.saturation_f=map(amps,AMP_MIN,AMP_MAX,180,255);
-       }
+ 
    
    //funcion para aumentar el serpenteo del trazo   
     setEscalaRuido(pitchE){

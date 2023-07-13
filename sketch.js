@@ -2,9 +2,7 @@
 //hacer guion con las cosas a explicar 
 //grabar video no muy tarde y subir git
 //to do list
-//--------trazos fondo---------///
-//-----Trazos figura---/////
-//hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
+
 //----Clase paleta --/////
 //unificar esteticasmente  imagenes de las que se extrae el color para las paletas
 //modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
@@ -25,7 +23,7 @@ let cantidadagregar_tf=10;
 let cantidad_total_tf=0;
 let cantidad_tfig=0;
 let cantidad_max_tf=25;
-let cantidad_max_tfig=400;
+let cantidad_max_tfig=30;
 
 //tiempo
 let marca;
@@ -202,7 +200,6 @@ colorMode(HSB);
 }
 ///-----------------DRAW---------///
 function draw() {
-  //console.log(tfon.length);
   //cargo en vol la amplitud de la señal del mic cruda
   let vol= mic.getLevel();
   gestorAmp.actualizar(vol);//volumen filtrado
@@ -301,14 +298,19 @@ let bandera_empezofigura = false;
         tfig[cantidad_tfig].saltaralprincipio();
       cantidad_tfig ++;
     }
-    //revisar si esto aporta algo y si ponerlo aca o en hay sonido
-    tfig.forEach((trazo) => {
-    trazo.SetBrillo(gestorAmp.filtrada);
-  });
+
      // Actualizar la bandera para indicar que la acción se ha realizado
      bandera_empezofigura = true;
   }
 
+
+// Verificar si la cantidad de trazos en tfig supera el límite máximo
+if (tfig.length > cantidad_max_tfig) {
+  // Calcular la cantidad de trazos a eliminar
+  let trazosPorEliminar = tfig.length - cantidad_max_tfig;
+  // Eliminar los trazos más antiguos del array
+  tfig.splice(0, trazosPorEliminar);
+}
 
    //mientras hay sonido 
   if(haySonido){ //Estado
