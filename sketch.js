@@ -23,7 +23,7 @@ let cantidadagregar_tf=10;
 let cantidad_total_tf=0;
 let cantidad_tfig=0;
 let cantidad_max_tf=25;
-let cantidad_max_tfig=30;
+let cantidad_max_tfig=25;
 
 //tiempo
 let marca;
