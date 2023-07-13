@@ -1,11 +1,3 @@
-//priorizar la estetica
-//hacer guion con las cosas a explicar 
-//grabar video no muy tarde y subir git
-//to do list
-
-//----Clase paleta --/////
-//unificar esteticasmente  imagenes de las que se extrae el color para las paletas
-//modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.020; // umbral mínimo de sonido que supera al ruido de fondo
