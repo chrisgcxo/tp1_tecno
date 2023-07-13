@@ -2,16 +2,10 @@
 //hacer guion con las cosas a explicar 
 //grabar video no muy tarde y subir git
 //to do list
-//necesito generar trazos un poco mas caoticos.
 //estetica revisar pinceles darle variacion de opacidad
-
-//---------general------// 
-//pensar si usar saturacion o brillo 
-//revisar la cuestion de la opacidad en los bordes
 //--------trazos fondo---------///
 //agregar otros trazos
 //-----Trazos figura---/////
-// revisar la cuestion de la curvatura de los trazos de la figura talvez exagerarla mas
 //hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 //----Clase paleta --/////
 //unificar esteticasmente  imagenes de las que se extrae el color para las paletas
@@ -79,6 +73,8 @@ let mascarafigura=[];
 let index_mfig;
 // Array de imágenes de trazos figura
 let imgs_trazos = [];
+//array de trazos fondo
+let imgs_trazos_fondo = [];
 //objeto paleta
 let paletas_color;
 
@@ -86,26 +82,40 @@ let paletas_color;
 let imagen_paleta_fondo=[];
 //array de imagenes para las paletas de la figura
 let imagen_paleta_figura=[];
+let imgfondo;
 //////--------------------PRELOAD----------//////////
 // Carga de recursos antes de iniciar el sketch
 function preload() {
-
+//iamgen lienzo
+imgfondo= loadImage("imagenes/lienzofondo2.jpg")
 // Trazo del fondo
 trazofondo = loadImage('trazos/trazofondo_prueba3.png');
-
+let urls_tfon=[
+  "trazos/trazofondo_prueba3.png",
+  "trazos/trazofondo_4.png", //este está lindo 
+  "trazos/trazofondo_6.png", //este está lindo
+ "trazos/trazofondo_8.png",// este si
+ "trazos/trazofondo_9a.png"// este si
+];
+for (let h =0; h<urls_tfon.length;h++){
+  loadImage(urls_tfon[h], (img) => {
+    imgs_trazos_fondo.push(img); // Agregar la imagen cargada al array
+    });
+}
 
   // Recursos figura
   // URLs de las imágenes de trazo figura
   let urls = [
    "trazos/trazofigura_0.png",
    "trazos/trazofigura_0a.png",
-    //"trazos/trazofigura_01.png",//ESTE SE VE MAL
     "trazos/trazofigura_02.png",
     "trazos/trazofigura_03.png",
-    "trazos/trazofigura_04.png", 
+   "trazos/trazofigura_04.png", 
     "trazos/trazofigura_05.png",
-    "trazos/trazofigura_06.png",
-    "trazos/trazofigura_07.png" 
+   "trazos/trazofigura_06.png",//no se si me convence mucho
+    "trazos/trazofigura_07.png",//este si
+    "trazos/trazofigura_08.png", //este si
+    "trazos/trazofigura_10.png"//púede ser
   ];
 
   // Carga de las imágenes de trazos figura en el array imgs_trazos
@@ -163,7 +173,8 @@ trazofondo = loadImage('trazos/trazofondo_prueba3.png');
     "trazos/mascara_figura5.jpg",
     "trazos/mascara_figura6.jpg",
     "trazos/mascara_figura7.jpg",
-    "trazos/mascara_figura8.jpg"
+    "trazos/mascara_figura8.jpg",
+    "trazos/mascara_figura9.jpg"
   ];
 
   // Carga de las imágenes de trazos figura en el array imagen_paleta_fondo
@@ -192,7 +203,8 @@ function setup() {
  //obj palaeta de color
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
-background(255);
+//background(255);
+image(imgfondo,0,0,width,height);
 colorMode(HSB);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
@@ -218,7 +230,7 @@ if(estado == "fondo"){
       //este calculo determina cuantos trazos faltan para completar la cantidad maxima, para evitar generar mas trazos de los permitidos por la cantidad maxima
       let trazosPorAgregar = Math.min(cantidadagregar_tf, cantidad_max_tf - tfon.length);
       for (let i = 0; i < trazosPorAgregar; i++) {
-        tfon.push(new Trazo_f_regular(trazofondo, paletas_color, 3));
+        tfon.push(new Trazo_f_regular(imgs_trazos_fondo, paletas_color, 3));
         cantidad_tf++;
         cantidad_total_tf++;
       }
@@ -226,7 +238,7 @@ if(estado == "fondo"){
     //si la cantidad de trazos generados es mayor a 50 hacer trazos irregulares
     if (cantidad_total_tf > 150) {
       tfon.forEach((trazo) => {
-        cantidadagregar_tf=3;//cambio la cantidad a agregar    
+        cantidadagregar_tf=5;//cambio la cantidad a agregar    
         trazo.dibujar_irregulares(gestorPitch.filtrada);
   });
     } 
@@ -254,7 +266,7 @@ if(estado == "fondo"){
       tfon.forEach((trazo) => {
         //cambiar tamaño con volumen
         trazo.setTam(gestorAmp.filtrada);
-        trazo.setEscalaRuido(gestorPitch.filtrada);
+        trazo.setEscalaRuido(gestorPitch.filtrada,gestorAmp.filtrada);
       });
 
     }

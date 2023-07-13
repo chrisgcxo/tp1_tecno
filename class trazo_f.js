@@ -4,6 +4,9 @@ class Trazo_f_regular{
     this.largo=0;
     //variable para elegir el trazo//
     this.quetrazo = quetrazo;
+    // Asignar un índice aleatorio al array de imagenes para los trazos
+  this.cual = floor(random(this.quetrazo.length));
+  this.quetrazo = this.quetrazo[this.cual];
     //tamaño trazos
     this.tamaño =15;
     //variable para levantar la clase paleta
@@ -53,7 +56,7 @@ class Trazo_f_regular{
   this.angulo = map(this.posX, 0, width, this.anguloInicial_fig - 90, this.anguloInicial_fig + 90) + anguloRuido;
   
 // map para el rotate de las imgs hay que probar si es mejor con 0 como está
-this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
+this.anguloimg= map(this.posX,0, width,-90,+90);
 
   // dirección en x
   this.dx = this.vel * cos(radians(this.angulo));
@@ -146,7 +149,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90)+anguloRuido;
       pop();
     }
     
-    dibujar_irregulares(pitchi) {
+    dibujar_irregulares(pitchi,ampt2) {
       // Cambio la posición al azar en la altura de la pantalla cada vez que hay sonido
       this.posY = random(0 + this.tamaño, height - this.tamaño);
       // Cambio la escala de pitch para que sea más curvado
