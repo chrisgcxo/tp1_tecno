@@ -5,17 +5,27 @@ class paleta {
     this.imagenPaleta_figura = this.elegirImagenAleatoria(imagenPaleta_figura);
   }
   
-  // Paleta fondo
-  darUnColor_fondo() {
-    let x = int(random(this.imagenPaleta_fondo.width));
-    let y = int(random(this.imagenPaleta_fondo.height));
-  
-    let pixelColor = this.imagenPaleta_fondo.get(x, y);
-  
+ // Paleta fondo
+ darUnColor_fondo() {
+  let x, y, pixelColor;
+
+  do {
+    x = int(random(this.imagenPaleta_fondo.width));
+    y = int(random(this.imagenPaleta_fondo.height));
+
+    pixelColor = this.imagenPaleta_fondo.get(x, y);
+
     let { hue, saturation, brightness, alpha } = rgbToHsb(pixelColor);
-  
+
+    // Verificar si el color es "muy chillón" (saturación y brillo altos)
+    if (saturation > 65 && brightness > 65) {
+      // Generar nuevos valores de coordenadas y obtener un nuevo color
+      continue;
+    }
+
     return { hue, saturation, brightness, alpha };
-  }
+  } while (true);
+}
 
   // Elegir una imagen aleatoria de un array
   elegirImagenAleatoria(imagenes) {
@@ -33,7 +43,7 @@ class paleta {
     }
   }
 
-  //ver si no me conviene retornar todos los parametros del color por separado
+
   //paleta figura
   darUnColor_figura(posY) {
     let x, y, pixelColor;
@@ -44,18 +54,16 @@ class paleta {
       
       pixelColor = this.imagenPaleta_figura.get(x, y);
       
-      let alphaValue = alpha(pixelColor);
-      
+        // Convertir a HSB
+        let { hue, saturation, brightness,alpha } = rgbToHsb(pixelColor);
       // Verificar si el píxel es transparente (alpha = 0)
-      if (alphaValue === 0) {
+      if (saturation < 30 || alpha === 0) {
         // Generar nuevas coordenadas y obtener un nuevo píxel
         continue;
       }
       
-      // Convertir a HSB
-      let { hue, saturation, brightness } = rgbToHsb(pixelColor);
       
-      return { hue, saturation, brightness, alpha: alphaValue };
+      return { hue, saturation, brightness, alpha};
     } while (true);
   }
   

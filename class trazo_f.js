@@ -149,7 +149,7 @@ this.anguloimg= map(this.posX,0, width,-90,+90);
       pop();
     }
     
-    dibujar_irregulares(pitchi,ampt2) {
+    dibujar_irregulares(pitchi) {
       // Cambio la posición al azar en la altura de la pantalla cada vez que hay sonido
       this.posY = random(0 + this.tamaño, height - this.tamaño);
       // Cambio la escala de pitch para que sea más curvado

@@ -2,16 +2,12 @@
 //hacer guion con las cosas a explicar 
 //grabar video no muy tarde y subir git
 //to do list
-//estetica revisar pinceles darle variacion de opacidad
 //--------trazos fondo---------///
-//agregar otros trazos
 //-----Trazos figura---/////
 //hacer lo mismo que con el trazo figura para generar solo algunos y que despues sea el saltar al principio lo que pinta en realidad 
 //----Clase paleta --/////
 //unificar esteticasmente  imagenes de las que se extrae el color para las paletas
 //modificar la funcion para que revise si una paleta tiene transparencias o hacerlas todas asi
-//hacer mas paletas si llego 
-
 //----CONFIGURACION-----
 //amplitud minima y maxima
 let AMP_MIN = 0.020; // umbral mínimo de sonido que supera al ruido de fondo
@@ -82,20 +78,18 @@ let paletas_color;
 let imagen_paleta_fondo=[];
 //array de imagenes para las paletas de la figura
 let imagen_paleta_figura=[];
-let imgfondo;
+
 //////--------------------PRELOAD----------//////////
 // Carga de recursos antes de iniciar el sketch
 function preload() {
-//iamgen lienzo
-imgfondo= loadImage("imagenes/lienzofondo2.jpg")
 // Trazo del fondo
 trazofondo = loadImage('trazos/trazofondo_prueba3.png');
 let urls_tfon=[
   "trazos/trazofondo_prueba3.png",
-  "trazos/trazofondo_4.png", //este está lindo 
-  "trazos/trazofondo_6.png", //este está lindo
- "trazos/trazofondo_8.png",// este si
- "trazos/trazofondo_9a.png"// este si
+  "trazos/trazofondo_4.png",
+  "trazos/trazofondo_6.png", 
+ "trazos/trazofondo_8.png",
+ "trazos/trazofondo_9a.png"
 ];
 for (let h =0; h<urls_tfon.length;h++){
   loadImage(urls_tfon[h], (img) => {
@@ -112,10 +106,8 @@ for (let h =0; h<urls_tfon.length;h++){
     "trazos/trazofigura_03.png",
    "trazos/trazofigura_04.png", 
     "trazos/trazofigura_05.png",
-   "trazos/trazofigura_06.png",//no se si me convence mucho
-    "trazos/trazofigura_07.png",//este si
-    "trazos/trazofigura_08.png", //este si
-    "trazos/trazofigura_10.png"//púede ser
+    "trazos/trazofigura_07.png",
+    "trazos/trazofigura_08.png"
   ];
 
   // Carga de las imágenes de trazos figura en el array imgs_trazos
@@ -203,8 +195,7 @@ function setup() {
  //obj palaeta de color
   paletas_color = new paleta(imagen_paleta_fondo,imagen_paleta_figura);  
  
-//background(255);
-image(imgfondo,0,0,width,height);
+background(255);
 colorMode(HSB);
   //variable para elegir una mascara de figuras del array
   index_mfig=floor(random(mascarafigura.length));
